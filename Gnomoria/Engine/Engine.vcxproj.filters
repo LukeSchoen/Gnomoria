@@ -1,0 +1,57 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source">
+      <UniqueIdentifier>{c6a367f1-c8ee-4450-9d7b-07568170e494}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Game">
+      <UniqueIdentifier>{5a814944-6e39-48a8-b9d3-5a954e5ba862}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Game\Gnomes">
+      <UniqueIdentifier>{647ae4c3-b3f2-4ffd-bd89-12b7571e3046}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Game\World">
+      <UniqueIdentifier>{442f42c4-5df1-4d3b-8460-29f2104cecb6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Engine">
+      <UniqueIdentifier>{2b6cff54-645f-4029-bf98-c83dc1770e18}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Engine\GUI">
+      <UniqueIdentifier>{a145878b-30b3-4f99-80f5-202d8958f606}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Engine\Render">
+      <UniqueIdentifier>{f874ef3c-14f3-4a3f-97c3-f0c45c8d5330}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Game\Noise">
+      <UniqueIdentifier>{e7f32550-13c8-4f42-80e1-3fceb473b08e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Engine\RealTime">
+      <UniqueIdentifier>{bf7f5506-a8a2-41d7-a942-20da406f0a27}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Source\Camera.h">
+      <Filter>Source\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Shaders.h">
+      <Filter>Source\Engine\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="PerlinNoise.h">
+      <Filter>Source\Game\Noise</Filter>
+    </ClInclude>
+    <ClInclude Include="RealTimeEngine.h">
+      <Filter>Source\Engine\RealTime</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Source\Main.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="PerlinNoise.cpp">
+      <Filter>Source\Game\Noise</Filter>
+    </ClCompile>
+    <ClCompile Include="RealTimeEngine.cpp">
+      <Filter>Source\Engine\RealTime</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
