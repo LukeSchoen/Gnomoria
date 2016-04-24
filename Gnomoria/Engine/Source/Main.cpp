@@ -113,9 +113,15 @@ glm::vec3 Solve(uint8_t* world, int w, int h, int l, int x, int z)
   y += h;
   z += h;
 
+  int giveup = 0;
   while (((x < 0) | (y < 0) | (z < 0) | (x >= w) | (y >= h) | (z >= l)))
   {
     x--; y--; z--;
+    giveup++;
+    if (giveup > 1024)
+    {
+      return glm::vec3(-1, -1, -1);
+    }
   }
 
   while (true)
@@ -1038,8 +1044,8 @@ int wmain(int argc, char* argv[])
       if (camPos.y > 80)
         camPos.y = 80;
 
-      if (camPos.y < 8)
-        camPos.y = 8;
+      if (camPos.y < 6)
+        camPos.y = 6;
 
     }
 

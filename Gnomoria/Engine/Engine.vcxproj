@@ -29,6 +29,13 @@
     <ClCompile Include="RealTimeEngine.cpp" />
     <ClCompile Include="Source\Main.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\..\Assets\Textures\Texture.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\Assets\Schematics\small.schematic" />
+    <None Include="..\..\Assets\Schematics\world.schematic" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{5BF8A5BF-BFF6-47A7-8B62-42DE505E2BFB}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
@@ -83,11 +90,15 @@
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(ProjectDir)\Output\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)\Intermediate\$(Platform)\$(Configuration)\</IntDir>
+    <CustomBuildBeforeTargets>
+    </CustomBuildBeforeTargets>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(ProjectDir)\Output\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)\Intermediate\$(Platform)\$(Configuration)\</IntDir>
+    <CustomBuildBeforeTargets>
+    </CustomBuildBeforeTargets>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -123,6 +134,12 @@
       <Command>xcopy "$(SolutionDir)..\3rdParty\SDL2\Lib\$(Platform)\$(Configuration)\SDL2.DLL" $(OutDir) /d /y /i
 xcopy "$(SolutionDir)..\Assets" "$(OutDir)\assets" /d /e /y /i</Command>
     </PreBuildEvent>
+    <CustomBuildStep>
+      <Command>
+      </Command>
+      <Message>
+      </Message>
+    </CustomBuildStep>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -148,6 +165,12 @@ xcopy "$(SolutionDir)..\Assets" "$(OutDir)\assets" /d /e /y /i</Command>
       <Command>xcopy "$(SolutionDir)..\3rdParty\SDL2\Lib\$(Platform)\$(Configuration)\SDL2.DLL" $(OutDir) /d /y /i
 xcopy "$(SolutionDir)..\Assets" "$(OutDir)\assets" /d /e /y /i</Command>
     </PreBuildEvent>
+    <CustomBuildStep>
+      <Command>
+      </Command>
+      <Message>
+      </Message>
+    </CustomBuildStep>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
