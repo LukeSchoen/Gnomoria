@@ -8,12 +8,6 @@
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
 # Build results
-[Dd]ebug/
-[Dd]ebugPublic/
-[Rr]elease/
-[Rr]eleases/
-x64/
-x86/
 bld/
 [Bb]in/
 [Oo]bj/
@@ -29,8 +23,6 @@ bld/
 *.VisualState.xml
 TestResult.xml
 # Build Results of an ATL Project
-[Dd]ebugPS/
-[Rr]eleasePS/
 dlldata.c
 # DNX
 project.lock.json
