@@ -24,34 +24,37 @@
 #include "Shaders.h"
 #include "Camera.h"
 #include <time.h>
+#include "Vector.h"
 
 #pragma endregion
 
+Vec2i someVec;
 #pragma region globals
 
 //Program name
 const char* PROGRAM_NAME = "Renderer";
 
-//#define testWindow
+#define testWindow
 
 #ifdef _DEBUG
 //Window resolution
 const int SCREEN_WIDTH = 480;
 const int SCREEN_HEIGHT = 480;
-const bool FULL_SCEEN = false;
+const bool FULL_SCREEN = false;
 #else
 #ifdef testWindow
 //Window resolution
-const int SCREEN_WIDTH = 320;
-const int SCREEN_HEIGHT = 320;
-const bool FULL_SCEEN = false;
-#else
-const int SCREEN_WIDTH = 1024;
+const int SCREEN_WIDTH = 1280;
 const int SCREEN_HEIGHT = 768;
-const bool FULL_SCEEN = true;
+const bool FULL_SRCEEN = false;
+#else
+const int SCREEN_WIDTH = 1920;
+const int SCREEN_HEIGHT = 1200;
+const bool FULL_SRCEEN = true;
 #endif
 #endif
 
+bool vsync = true;
 //The window we'll be rendering to
 SDL_Window* gWindow = NULL;
 
@@ -227,9 +230,8 @@ void AddTile(int posx, int posy, int posz, glm::vec3 col, int tex)
   int isoY = posy;
   int isoZ = posx + posz - posy * 2;
   isoY = 0;
-
   int AtlasTileWidth = 16;
-  float iATW = 1.0 / AtlasTileWidth;
+  float iATW = 1.0f / AtlasTileWidth;
   int tx = tex % AtlasTileWidth;
   int ty = tex / AtlasTileWidth;
   float u = tx * iATW;
@@ -654,14 +656,14 @@ bool init()
   SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
 
   //Create window
-  gWindow = SDL_CreateWindow(PROGRAM_NAME, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN | (SDL_WINDOW_FULLSCREEN * FULL_SCEEN));
+  gWindow = SDL_CreateWindow(PROGRAM_NAME, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN | (SDL_WINDOW_FULLSCREEN * FULL_SRCEEN));
   if (gWindow == NULL)
   {
     printf("Error: Window could not be created! SDL Error: %s\n", SDL_GetError());
     return false;
   }
 
-  SDL_SetWindowBordered(gWindow, SDL_FALSE);
+  //SDL_SetWindowBordered(gWindow, SDL_FALSE);
 
 
   //Create context
@@ -682,7 +684,7 @@ bool init()
   }
 
   //Enable Vsync
-  if (SDL_GL_SetSwapInterval(1) < 0)
+  if (SDL_GL_SetSwapInterval(vsync ) < 0)
   {
     printf("Warning: Unable to set VSync! SDL Error: %s\n", SDL_GetError());
   }

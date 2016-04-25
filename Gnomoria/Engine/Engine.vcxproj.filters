@@ -31,6 +31,9 @@
     <Filter Include="Assets">
       <UniqueIdentifier>{3c31e02b-7189-4fbc-8fd9-c79e83f82cdc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\gmMath">
+      <UniqueIdentifier>{1b16f265-6d42-4e10-9c96-ae4db604d76c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Camera.h">
@@ -44,6 +47,9 @@
     </ClInclude>
     <ClInclude Include="RealTimeEngine.h">
       <Filter>Source\Engine\RealTime</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Vector.h">
+      <Filter>Source\gmMath</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
