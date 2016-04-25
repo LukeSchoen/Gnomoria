@@ -220,6 +220,41 @@ void AddQuad(glm::vec3 p1, glm::vec3 p2, glm::vec3 p3, glm::vec3 p4, glm::vec3 c
   VertexCount++;
 }
 
+void AddTile(int posx, int posy, int posz, glm::vec3 col, int tex)
+{
+  tex--;
+  int isoX = posx - posz;
+  int isoY = posy;
+  int isoZ = posx + posz - posy * 2;
+  isoY = 0;
+
+  int AtlasTileWidth = 16;
+  float iATW = 1.0 / AtlasTileWidth;
+  int tx = tex % AtlasTileWidth;
+  int ty = tex / AtlasTileWidth;
+  float u = tx * iATW;
+  float v = ty * iATW;
+
+  AddQuad(
+    // Position
+    glm::vec3(isoX, isoY, isoZ / 2.0),
+    glm::vec3(isoX + 2, isoY, isoZ / 2.0),
+    glm::vec3(isoX + 2, isoY, isoZ / 2.0 + 2),
+    glm::vec3(isoX, isoY, isoZ / 2.0 + 2),
+    // Color
+    glm::vec3(col.r, col.g, col.b),
+    glm::vec3(col.r, col.g, col.b),
+    glm::vec3(col.r, col.g, col.b),
+    glm::vec3(col.r, col.g, col.b),
+    // UV
+    glm::vec2(u, v),
+    glm::vec2(u + iATW, v),
+    glm::vec2(u + iATW, v + iATW),
+    glm::vec2(u, v + iATW)
+    );
+
+}
+
 bool TexelExists(uint8_t* img, int w, int h, int x, int y)
 {
   if ((x < 0) | (y < 0) | (x >= w) | (y >= h))
@@ -228,7 +263,7 @@ bool TexelExists(uint8_t* img, int w, int h, int x, int y)
   uint8_t g = img[(x + y * w) * 3 + 1];
   uint8_t b = img[(x + y * w) * 3 + 0];
   uint8_t a = 255;
-  if (r + g + b == 255 * 3)
+  if (r == 255 && g == 0 && b == 255)
     return false;
   return true;
 }
@@ -240,7 +275,7 @@ GLuint LoadTexture(char * path)
   if (tex = SDL_LoadBMP(path))
   {
     glGenTextures(1, &texID);
-    //Turn white pixels transparent and upload texture to GL
+    //Turn pink pixels transparent and upload texture to GL
     int w = tex->w;
     int h = tex->h;
     uint8_t *img = new uint8_t[w * h * 4];
@@ -254,7 +289,7 @@ GLuint LoadTexture(char * path)
         uint8_t b = pixels[(x + y * w) * 3 + 0];
         uint8_t a = 255;
 
-        if (r + g + b == 255 * 3)
+        if (r == 255 && g == 0 && b == 255)
         {
           //Transparent
           a = 0;
@@ -308,7 +343,7 @@ void BuildMesh()
     {
       for (int z = 0; z < worldLength; z++)
       {
-        float block = world[x + y*worldWidth + z * worldHeight * worldWidth];
+        uint8_t block = world[x + y*worldWidth + z * worldHeight * worldWidth];
         if (block > 0)
         {
           float b = y / 80.0f;
@@ -356,7 +391,7 @@ void BuildMesh()
         int isoY = y;
         int isoZ = x + z - y * 2;
         isoY = 0;
-        float block = world[x + y*worldWidth + z * worldHeight * worldWidth];
+        uint8_t block = world[x + y*worldWidth + z * worldHeight * worldWidth];
         if (block > 0)
         {
           float b = y / 80.0f;
@@ -367,24 +402,7 @@ void BuildMesh()
               BlockIsExposed(world, worldWidth, worldHeight, worldLength, x, y, z + 1))
             )
           {
-            //Wall
-            AddQuad(
-              // Position
-              glm::vec3(isoX, isoY, isoZ / 2.0),
-              glm::vec3(isoX + 2, isoY, isoZ / 2.0),
-              glm::vec3(isoX + 2, isoY, isoZ / 2.0 + 2),
-              glm::vec3(isoX, isoY, isoZ / 2.0 + 2),
-              // Color
-              glm::vec3(b, b, b),
-              glm::vec3(b, b, b),
-              glm::vec3(b, b, b),
-              glm::vec3(b, b, b),
-              // UV
-              glm::vec2((block - 1) / 8.0, 1.0 / 16.0),
-              glm::vec2((block + 1 - 1) / 8.0, 1.0 / 16.0),
-              glm::vec2((block + 1 - 1) / 8.0, 1.0 / 8.0 + 1.0 / 16.0),
-              glm::vec2((block - 1) / 8.0, 1.0 / 8.0 + 1.0 / 16.0)
-              );
+            AddTile(x, y, z, { b, b, b }, 32 + block);
           }
 
           if ( //basic floor solve
@@ -392,24 +410,7 @@ void BuildMesh()
             BlockIsExposed(world, worldWidth, worldHeight, worldLength, x, y, z)
             )
           {
-            //Floor
-            AddQuad(
-              // Position
-              glm::vec3(isoX, isoY, isoZ / 2.0),
-              glm::vec3(isoX + 2, isoY, isoZ / 2.0),
-              glm::vec3(isoX + 2, isoY, isoZ / 2.0 + 1),
-              glm::vec3(isoX, isoY, isoZ / 2.0 + 1),
-              // Color
-              glm::vec3(b, b, b),
-              glm::vec3(b, b, b),
-              glm::vec3(b, b, b),
-              glm::vec3(b, b, b),
-              // UV
-              glm::vec2((block - 1) / 8.0, 0.0),
-              glm::vec2((block + 1 - 1) / 8.0, 0.0),
-              glm::vec2((block + 1 - 1) / 8.0, 1.0 / 16.0),
-              glm::vec2((block - 1) / 8.0, 1.0 / 16.0)
-              );
+            AddTile(x, y, z, { b, b, b }, 16 + block);
           }
 
         }
@@ -419,15 +420,12 @@ void BuildMesh()
 
   printf("%d verts\n", VertexCount);
 
-  glGenBuffers(1, &vertPosDataGLPtr);
   glBindBuffer(GL_ARRAY_BUFFER, vertPosDataGLPtr);
   glBufferData(GL_ARRAY_BUFFER, VertexCount * 3 * sizeof(GLfloat), vertPosData, GL_STATIC_DRAW);
 
-  glGenBuffers(1, &UVPosDataGLPtr);
   glBindBuffer(GL_ARRAY_BUFFER, UVPosDataGLPtr);
   glBufferData(GL_ARRAY_BUFFER, VertexCount * 2 * sizeof(GLfloat), UVPosData, GL_STATIC_DRAW);
 
-  glGenBuffers(1, &colPosDataGLPtr);
   glBindBuffer(GL_ARRAY_BUFFER, colPosDataGLPtr);
   glBufferData(GL_ARRAY_BUFFER, VertexCount * 3 * sizeof(GLfloat), colPosData, GL_STATIC_DRAW);
 }
@@ -555,12 +553,12 @@ uint8_t* LoadFromSchematic(char* MapPath, int &width, int &height, int &depth)
                       switch (blockid)
                       {
                       case 1: blockid = 1; break;
-                      case 2: blockid = 2 + (rand() & 1); break;
-                      case 3: blockid = 4; break;
+                      case 2: blockid = 4; break;
+                      case 3: blockid = 2; break;
                       case 4: blockid = 0; break;
-                      case 5: blockid = 0; break;
-                      case 6: blockid = 0; break;
-                      case 7: blockid = 1; break;
+                      //case 5: blockid = 0; break;
+                      //case 6: blockid = 0; break;
+                      //case 7: blockid = 1; break;
                       case 8: blockid = 5; break;
                       case 9: blockid = 5; break;
                         //WOOD case 17: blockid = 7; break;
@@ -592,6 +590,10 @@ uint32_t SafeGetBlock(uint8_t* world, int w, int h, int l, int x, int y, int z)
 
 void LoadWorld()
 {
+  glGenBuffers(1, &vertPosDataGLPtr);
+  glGenBuffers(1, &UVPosDataGLPtr);
+  glGenBuffers(1, &colPosDataGLPtr);
+
   TextureID = LoadTexture("Assets\\Textures\\Texture.bmp");
   world = LoadFromSchematic("Assets\\schematics\\small.schematic", worldWidth, worldHeight, worldLength);
   BuildMesh();
