@@ -195,3 +195,4 @@ paket-files/
 # JetBrains Rider
 .idea/
 *.sln.imlf
+/Assets/Textures/GnomeTexGen.001

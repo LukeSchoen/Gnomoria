@@ -42,12 +42,12 @@ const bool FULL_SCREEN = false;
 #else
 #ifdef testWindow
 //Window resolution
-const int SCREEN_WIDTH = 1280;
-const int SCREEN_HEIGHT = 768;
+const int SCREEN_WIDTH = 320;
+const int SCREEN_HEIGHT = 320;
 const bool FULL_SRCEEN = false;
 #else
-const int SCREEN_WIDTH = 1920;
-const int SCREEN_HEIGHT = 1200;
+const int SCREEN_WIDTH = 1280;
+const int SCREEN_HEIGHT = 768;
 const bool FULL_SRCEEN = true;
 #endif
 #endif
@@ -221,7 +221,7 @@ void AddQuad(glm::vec3 p1, glm::vec3 p2, glm::vec3 p3, glm::vec3 p4, glm::vec3 c
   VertexCount++;
 }
 
-void AddTile(int posx, int posy, int posz, glm::vec3 col, int tex)
+void AddTile(int posx, int posy, int posz, glm::vec3 col, int tex, int xpixoffset=0, int ypixoffset=0)
 {
   tex--;
   int isoX = posx - posz;
@@ -235,12 +235,15 @@ void AddTile(int posx, int posy, int posz, glm::vec3 col, int tex)
   float u = tx * iATW;
   float v = ty * iATW;
 
+  float x = xpixoffset / 16.0;
+  float y = ypixoffset / 16.0;
+
   AddQuad(
     // Position
-    glm::vec3(isoX, isoY, isoZ / 2.0),
-    glm::vec3(isoX + 2, isoY, isoZ / 2.0),
-    glm::vec3(isoX + 2, isoY, isoZ / 2.0 + 2),
-    glm::vec3(isoX, isoY, isoZ / 2.0 + 2),
+    glm::vec3(isoX + x, isoY, isoZ / 2.0 + y),
+    glm::vec3(isoX + 2 + x, isoY, isoZ / 2.0 + y),
+    glm::vec3(isoX + 2 + x, isoY, isoZ / 2.0 + 2 + y),
+    glm::vec3(isoX + x, isoY, isoZ / 2.0 + 2 + y),
     // Color
     glm::vec3(col.r, col.g, col.b),
     glm::vec3(col.r, col.g, col.b),
@@ -321,11 +324,17 @@ GLuint LoadTexture(char * path)
       }
     }
 
+    glGenTextures(1, &texID);
     glBindTexture(GL_TEXTURE_2D, texID);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, tex->w, tex->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, img);
-    //glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    
+    glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glGenerateMipmap(GL_TEXTURE_2D);
+
     SDL_FreeSurface(tex);
     delete[] img;
   }
@@ -371,14 +380,14 @@ void BuildMesh()
   delete[] colPosData;
 
   //Just enough Memory
-  vertPosData = new GLfloat[verts * 3];
-  colPosData = new GLfloat[verts * 3];
-  UVPosData = new GLfloat[verts * 2];
+  //vertPosData = new GLfloat[verts * 3];
+  //colPosData = new GLfloat[verts * 3];
+  //UVPosData = new GLfloat[verts * 2];
 
   //Atleast Emough memory
-  //vertPosData = new GLfloat[worldWidth * worldHeight * worldLength * 6 * 3 * 2];
-  //UVPosData = new GLfloat[worldWidth * worldHeight * worldLength * 6 * 2 * 2];
-  //colPosData = new GLfloat[worldWidth * worldHeight * worldLength * 6 * 3 * 2];
+  vertPosData = new GLfloat[worldWidth * worldHeight * worldLength * 6 * 3 * 2];
+  UVPosData = new GLfloat[worldWidth * worldHeight * worldLength * 6 * 2 * 2];
+  colPosData = new GLfloat[worldWidth * worldHeight * worldLength * 6 * 3 * 2];
 
   //Make a graphical representation
   for (int y = 0; y < worldHeight; y++)
@@ -395,6 +404,7 @@ void BuildMesh()
         if (block > 0)
         {
           float b = y / 80.0f;
+          bool drawn = false;
           if ( //basic wall solve
             (SafeGetBlock(world, worldWidth, worldHeight, worldLength, x + 1, y, z) == 0 &&
               BlockIsExposed(world, worldWidth, worldHeight, worldLength, x + 1, y, z)) ||
@@ -403,6 +413,7 @@ void BuildMesh()
             )
           {
             AddTile(x, y, z, { b, b, b }, 32 + block);
+            drawn = true;
           }
 
           if ( //basic floor solve
@@ -411,6 +422,14 @@ void BuildMesh()
             )
           {
             AddTile(x, y, z, { b, b, b }, 16 + block);
+            drawn = true;
+          }
+          if (drawn)
+          {
+            if (SafeGetBlock(world, worldWidth, worldHeight, worldLength, x - 1, y, z) == 0)
+              AddTile(x, y, z, { b, b, b }, 5, 0, -1);
+            if (SafeGetBlock(world, worldWidth, worldHeight, worldLength, x, y, z-1) == 0)
+              AddTile(x, y, z, { b, b, b }, 6, 0, -1);
           }
 
         }
@@ -559,8 +578,9 @@ uint8_t* LoadFromSchematic(char* MapPath, int &width, int &height, int &depth)
                       //case 5: blockid = 0; break;
                       //case 6: blockid = 0; break;
                       //case 7: blockid = 1; break;
-                      case 8: blockid = 5; break;
-                      case 9: blockid = 5; break;
+                      case 8: blockid = 6; break;
+                      case 9: blockid = 6; break;
+                      case 12: blockid = 5; break;
                         //WOOD case 17: blockid = 7; break;
                       default: blockid = 0; break;
                       }
