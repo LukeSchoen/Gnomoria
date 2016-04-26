@@ -24,11 +24,9 @@
 #include "Shaders.h"
 #include "Camera.h"
 #include <time.h>
-#include "Vector.h"
 
 #pragma endregion
 
-Vec2i someVec;
 #pragma region globals
 
 //Program name

@@ -22,8 +22,8 @@
     <ClInclude Include="PerlinNoise.h" />
     <ClInclude Include="RealTimeEngine.h" />
     <ClInclude Include="Source\Camera.h" />
+    <ClInclude Include="Source\Math\Vector.h" />
     <ClInclude Include="Source\Shaders.h" />
-    <ClInclude Include="Source\Vector.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="PerlinNoise.cpp" />
