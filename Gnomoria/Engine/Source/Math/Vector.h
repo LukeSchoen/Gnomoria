@@ -22,7 +22,7 @@ struct Vector2
 	void XY(Vector2<T> _xy) { x = _xy.x; y = _xy.y; };
 	void YX(Vector2<T> _yx) { x = _xy.y; y = _xy.x; };
 
-	float Length() const { return sqrt((float)LengthSquared()); }
+	float Length() const { return sqrt(LengthSquared()); }
 	float LengthSquared() const { return Dot(*this); }
 	Vector2<float> Normalise() const { return Vector2<float>(*this) / Length(); }
 	template <typename T2> float Dot(Vector2<T2> other) const { return float(x * other.x + y * other.y); }
@@ -101,7 +101,7 @@ struct Vector3
 	void ZXY(Vector3<T> _zxy) { z = _xyz.x; x = _xyz.y; y = _xyz.z; }
 	void ZYX(Vector3<T> _zyx) { z = _xyz.x; y = _xyz.y; z = _xyz.z; }
 
-	float Length() const { return sqrt((float)LengthSquared()); }
+	float Length() const { return sqrt(LengthSquared()); }
 	float LengthSquared() const { return Dot(*this); }
 	Vector3<float> Normalise() const { return Vector3<float>(*this) / Length(); }
 	template <typename T2> float Dot(Vector3<T2> other) const { return float(x * other.x + y * other.y + z * other.z); }
