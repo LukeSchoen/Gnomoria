@@ -30,9 +30,11 @@
 #pragma region globals
 
 //Program name
-const char* PROGRAM_NAME = "Renderer";
+const char* PROGRAM_NAME = "Gnomorrhea";
 
 #define testWindow
+
+const int USE_VSYNC = 1;
 
 #ifdef _DEBUG
 //Window resolution
@@ -52,7 +54,6 @@ const bool FULL_SRCEEN = true;
 #endif
 #endif
 
-bool vsync = true;
 //The window we'll be rendering to
 SDL_Window* gWindow = NULL;
 
@@ -702,7 +703,7 @@ bool init()
   }
 
   //Enable Vsync
-  if (SDL_GL_SetSwapInterval(vsync ) < 0)
+  if (SDL_GL_SetSwapInterval(USE_VSYNC) < 0)
   {
     printf("Warning: Unable to set VSync! SDL Error: %s\n", SDL_GetError());
   }
