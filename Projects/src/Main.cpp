@@ -32,7 +32,7 @@
 //Program name
 const char* PROGRAM_NAME = "Gnomorrhea";
 
-#define testWindow
+//#define testWindow
 
 const int USE_VSYNC = 1;
 
@@ -48,7 +48,7 @@ const int SCREEN_WIDTH = 320;
 const int SCREEN_HEIGHT = 320;
 const bool FULL_SCREEN = false;
 #else
-const int SCREEN_WIDTH = 1280;
+const int SCREEN_WIDTH = 1024;
 const int SCREEN_HEIGHT = 768;
 const bool FULL_SCREEN = true;
 #endif
@@ -327,11 +327,8 @@ GLuint LoadTexture(char * path)
 
     glGenTextures(1, &texID);
     glBindTexture(GL_TEXTURE_2D, texID);
+    glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, tex->w, tex->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, img);
-    glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    
-    glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glGenerateMipmap(GL_TEXTURE_2D);
@@ -357,6 +354,7 @@ void BuildMesh()
         if (block > 0)
         {
           float b = y / 80.0f;
+          bool drawn = false;
           if ( //basic wall solve
             (SafeGetBlock(world, worldWidth, worldHeight, worldLength, x + 1, y, z) == 0 &&
               BlockIsExposed(world, worldWidth, worldHeight, worldLength, x + 1, y, z)) ||
@@ -364,13 +362,27 @@ void BuildMesh()
               BlockIsExposed(world, worldWidth, worldHeight, worldLength, x, y, z + 1))
             )
             //Wall
+          {
             verts += 6;
+            drawn = true;
+          }
           if ( //basic floor solve
             SafeGetBlock(world, worldWidth, worldHeight, worldLength, x, y + 1, z) == 0 &&
             BlockIsExposed(world, worldWidth, worldHeight, worldLength, x, y, z)
             )
             //Floor
+          {
+            drawn = true;
             verts += 6;
+          }
+
+          if (drawn)
+          {
+            if (SafeGetBlock(world, worldWidth, worldHeight, worldLength, x - 1, y, z) == 0)
+              verts += 6;
+            if (SafeGetBlock(world, worldWidth, worldHeight, worldLength, x, y, z - 1) == 0)
+              verts += 6;
+          }
         }
       }
     }
@@ -381,14 +393,14 @@ void BuildMesh()
   delete[] colPosData;
 
   //Just enough Memory
-  //vertPosData = new GLfloat[verts * 3];
-  //colPosData = new GLfloat[verts * 3];
-  //UVPosData = new GLfloat[verts * 2];
+  vertPosData = new GLfloat[verts * 3];
+  colPosData = new GLfloat[verts * 3];
+  UVPosData = new GLfloat[verts * 2];
 
   //Atleast Emough memory
-  vertPosData = new GLfloat[worldWidth * worldHeight * worldLength * 6 * 3 * 2];
-  UVPosData = new GLfloat[worldWidth * worldHeight * worldLength * 6 * 2 * 2];
-  colPosData = new GLfloat[worldWidth * worldHeight * worldLength * 6 * 3 * 2];
+  //vertPosData = new GLfloat[worldWidth * worldHeight * worldLength * 6 * 3 * 2];
+  //UVPosData = new GLfloat[worldWidth * worldHeight * worldLength * 6 * 2 * 2];
+  //colPosData = new GLfloat[worldWidth * worldHeight * worldLength * 6 * 3 * 2];
 
   //Make a graphical representation
   for (int y = 0; y < worldHeight; y++)
@@ -616,11 +628,9 @@ void LoadWorld()
   glGenBuffers(1, &colPosDataGLPtr);
 
   TextureID = LoadTexture("Assets\\Textures\\Texture.bmp");
-  world = LoadFromSchematic("Assets\\schematics\\small.schematic", worldWidth, worldHeight, worldLength);
+  world = LoadFromSchematic("Assets\\schematics\\world.schematic", worldWidth, worldHeight, worldLength);
   BuildMesh();
 }
-
-
 
 //Space Transforms
 glm::vec2 ScreenToDevice(glm::vec2 ScreenPos)
@@ -640,8 +650,8 @@ glm::vec2 DeviceToIso(glm::vec2 mousePos)
 glm::vec2 IsoToOrtho(glm::vec2 IsoPos)
 {
   glm::vec2 &i = IsoPos;
-  i -= glm::vec2(1, 2);
-  glm::vec2 OrthoPos((i.y + i.x) / 2, (i.y + i.x) / 2 - i.x);
+  i -= glm::vec2(1, 1);
+  glm::vec2 OrthoPos((i.y + i.x) / 2.0, (i.y + i.x) / 2.0 - i.x);
   return OrthoPos;
 }
 
@@ -650,7 +660,7 @@ glm::ivec3 ScreenToWorld(glm::vec2 ScreenPos)
   glm::vec2 DeviceSpace = ScreenToDevice(ScreenPos);
   glm::vec2 IsoSpace = DeviceToIso(DeviceSpace);
   glm::vec2 OrthoSpace = IsoToOrtho(IsoSpace);
-  return Solve(world, worldWidth, worldHeight, worldLength, (int)OrthoSpace.x, (int)OrthoSpace.y);
+  return Solve(world, worldWidth, worldHeight, worldLength, (int)round(OrthoSpace.x), (int)round(OrthoSpace.y));
 }
 
 
