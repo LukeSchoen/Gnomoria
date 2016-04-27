@@ -23,6 +23,7 @@
 
 #include "Shaders.h"
 #include "Camera.h"
+#include "InputManager.h"
 #include <time.h>
 
 #pragma endregion
@@ -38,17 +39,17 @@ const char* PROGRAM_NAME = "Renderer";
 //Window resolution
 const int SCREEN_WIDTH = 480;
 const int SCREEN_HEIGHT = 480;
-const bool FULL_SCEEN = false;
+const bool FULL_SCREEN = false;
 #else
 #ifdef testWindow
 //Window resolution
 const int SCREEN_WIDTH = 320;
 const int SCREEN_HEIGHT = 320;
-const bool FULL_SCEEN = false;
+const bool FULL_SCREEN = false;
 #else
 const int SCREEN_WIDTH = 1024;
 const int SCREEN_HEIGHT = 768;
-const bool FULL_SCEEN = true;
+const bool FULL_SCREEN = true;
 #endif
 #endif
 
@@ -103,6 +104,8 @@ int worldWidth = 1;
 int worldHeight = 1;
 int worldLength = 1;
 
+// Input Handler
+InputManager inputManager;
 
 
 //Occlusion Solving
@@ -654,7 +657,7 @@ bool init()
   SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
 
   //Create window
-  gWindow = SDL_CreateWindow(PROGRAM_NAME, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN | (SDL_WINDOW_FULLSCREEN * FULL_SCEEN));
+  gWindow = SDL_CreateWindow(PROGRAM_NAME, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN | (SDL_WINDOW_FULLSCREEN * FULL_SCREEN));
   if (gWindow == NULL)
   {
     printf("Error: Window could not be created! SDL Error: %s\n", SDL_GetError());
@@ -997,50 +1000,29 @@ int wmain(int argc, char* argv[])
 
   while (running)
   {
-    //Handle SDL queue
-    while (SDL_PollEvent(&e) != 0)
-    {
-      if (e.type == SDL_QUIT) // User closed window?
-        running = false;
-      if (e.type == SDL_KEYDOWN) // User pressed esc?
-        if (e.key.keysym.sym == SDLK_ESCAPE)
-          running = false;
+	// Input
+	inputManager.Update(1.0f);
+	if (inputManager.Exit() || inputManager.IsKeyPressed(SDLK_ESCAPE))
+		running = false;
 
-      // mouse was moved
-      int x = 0, y = 0;
-      if (e.type == SDL_MOUSEMOTION)
-      {
-        //x = e.motion.xrel;
-        //y = e.motion.yrel;
-        //MouseControls(x, y);
-      }
+	if (inputManager.IsKeyPressed(SDL_BUTTON_LEFT))
+	{
+		glm::ivec3 pos = ScreenToWorld(inputManager.GetMouseCoords());
+		world[pos.x + pos.y * worldWidth + pos.z * worldWidth*worldHeight] = 0;
+		BuildMesh();
+	}
+	
+	if (inputManager.IsKeyPressed(SDL_BUTTON_RIGHT))
+	{
+		glm::ivec3 pos = ScreenToWorld(inputManager.GetMouseCoords());
+		world[pos.x + pos.y * worldWidth + pos.z * worldWidth*worldHeight] = 1;
+		BuildMesh();
+	}
 
-
-      int xmouse;
-      int ymouse;
-      if (SDL_GetMouseState(&xmouse, &ymouse) & SDL_BUTTON(SDL_BUTTON_LEFT))
-      {
-        glm::ivec3 pos = ScreenToWorld(glm::vec2(xmouse, ymouse));
-        world[pos.x + pos.y * worldWidth + pos.z * worldWidth*worldHeight] = 0;
-        BuildMesh();
-      }
-
-      if (SDL_GetMouseState(&xmouse, &ymouse) & SDL_BUTTON(SDL_BUTTON_RIGHT))
-      {
-        glm::ivec3 pos = ScreenToWorld(glm::vec2(xmouse, ymouse));
-        world[pos.x + (pos.y + 1) * worldWidth + pos.z * worldWidth*worldHeight] = 1;
-        BuildMesh();
-      }
-
-
-    }
-
-    //Handle keyboard input
-    const static unsigned char *keyboard = SDL_GetKeyboardState(NULL);
     glm::vec3 camOff;
 
     {//3d movement
-      camOff = CameraKeyboardControls(keyboard);
+      camOff = CameraKeyboardControls(&inputManager);
       camPos += camOff;
 
       if (camPos.y > 80)
@@ -1048,7 +1030,6 @@ int wmain(int argc, char* argv[])
 
       if (camPos.y < 6)
         camPos.y = 6;
-
     }
 
     //Render

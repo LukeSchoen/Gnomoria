@@ -31,6 +31,9 @@
     <Filter Include="Assets">
       <UniqueIdentifier>{3c31e02b-7189-4fbc-8fd9-c79e83f82cdc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Engine\Input">
+      <UniqueIdentifier>{f6e2bb6e-933c-4f89-b392-fb414c4f8441}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Camera.h">
@@ -45,6 +48,9 @@
     <ClInclude Include="RealTimeEngine.h">
       <Filter>Source\Engine\RealTime</Filter>
     </ClInclude>
+    <ClInclude Include="Source\InputManager.h">
+      <Filter>Source\Engine\Input</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Main.cpp">
@@ -55,6 +61,9 @@
     </ClCompile>
     <ClCompile Include="RealTimeEngine.cpp">
       <Filter>Source\Engine\RealTime</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\InputManager.cpp">
+      <Filter>Source\Engine\Input</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
