@@ -46,11 +46,11 @@ const bool FULL_SCREEN = false;
 //Window resolution
 const int SCREEN_WIDTH = 320;
 const int SCREEN_HEIGHT = 320;
-const bool FULL_SRCEEN = false;
+const bool FULL_SCREEN = false;
 #else
 const int SCREEN_WIDTH = 1280;
 const int SCREEN_HEIGHT = 768;
-const bool FULL_SRCEEN = true;
+const bool FULL_SCREEN = true;
 #endif
 #endif
 
@@ -675,7 +675,7 @@ bool init()
   SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
 
   //Create window
-  gWindow = SDL_CreateWindow(PROGRAM_NAME, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN | (SDL_WINDOW_FULLSCREEN * FULL_SRCEEN));
+  gWindow = SDL_CreateWindow(PROGRAM_NAME, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN | (SDL_WINDOW_FULLSCREEN * FULL_SCREEN));
   if (gWindow == NULL)
   {
     printf("Error: Window could not be created! SDL Error: %s\n", SDL_GetError());

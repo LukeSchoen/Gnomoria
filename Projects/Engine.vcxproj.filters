@@ -36,44 +36,37 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Source\Camera.h">
-      <Filter>Source\Engine</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Shaders.h">
+    <ClInclude Include="src\Renderer.h">
       <Filter>Source\Engine\Render</Filter>
     </ClInclude>
-    <ClInclude Include="PerlinNoise.h">
-      <Filter>Source\Game\Noise</Filter>
-    </ClInclude>
-    <ClInclude Include="RealTimeEngine.h">
-      <Filter>Source\Engine\RealTime</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Math\Vector.h">
+    <ClInclude Include="src\Math\Vector.h">
       <Filter>Source\Math</Filter>
     </ClInclude>
+    <ClInclude Include="src\Camera.h">
+      <Filter>Source\Game\World</Filter>
+    </ClInclude>
+    <ClInclude Include="src\PerlinNoise.h">
+      <Filter>Source\Game\Noise</Filter>
+    </ClInclude>
+    <ClInclude Include="src\RealTimeEngine.h">
+      <Filter>Source\Engine\RealTime</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Shaders.h">
+      <Filter>Source\Engine\Render</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Source\Main.cpp">
+    <ClCompile Include="src\Renderer.cpp">
+      <Filter>Source\Engine\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Main.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="PerlinNoise.cpp">
+    <ClCompile Include="src\PerlinNoise.cpp">
       <Filter>Source\Game\Noise</Filter>
     </ClCompile>
-    <ClCompile Include="RealTimeEngine.cpp">
+    <ClCompile Include="src\RealTimeEngine.cpp">
       <Filter>Source\Engine\RealTime</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="..\..\Assets\Textures\Texture.bmp">
-      <Filter>Assets</Filter>
-    </Image>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\Assets\Schematics\small.schematic">
-      <Filter>Assets</Filter>
-    </None>
-    <None Include="..\..\Assets\Schematics\world.schematic">
-      <Filter>Assets</Filter>
-    </None>
   </ItemGroup>
 </Project>
