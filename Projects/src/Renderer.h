@@ -1,8 +1,8 @@
 #ifndef Renderer_h__
 #define Renderer_h__
 
-#include <glm.hpp>
 #include "Math/Vector.h"
+#include <glm.hpp>
 
 #include <gl\glew.h>
 #include <SDL_opengl.h>
@@ -29,6 +29,35 @@ const bool FULL_SCREEN = true;
 #endif
 #endif
 
+struct Vert
+{
+  Vert(Vec3 Position, Vec3 Color, Vec2 UVs);
+  Vec3 position;
+  Vec3 color;
+  Vec2 uvs;
+};
+
+struct RenderObject
+{
+  RenderObject(int maxRenderSize /*In number of verticies*/);
+
+  void Resize(int newMaxRenderSize /*In number of verticies*/);
+
+  void SetTexture(GLuint TextureID);
+
+  bool AddQuad(Vec3 pos1);
+
+  GLfloat* PosData = nullptr;
+  GLfloat* colData = nullptr;
+  GLfloat* uvsData = nullptr;
+  GLuint posDataGLPtr = 0;
+  GLuint colDataGLPtr = 0;
+  GLuint uvsDataGLPtr = 0;
+  GLuint vertexCount = 0;
+  GLuint maxVertexCount = 0;
+  GLuint texture = -1;
+};
+
 bool Renderer_Initialise(); //Start SDL & Create Window
 void Renderer_Destroy();
 void Renderer_Render();
@@ -41,8 +70,8 @@ GLuint Renderer_LoadTexture(char *path);
 
 void Renderer_SetTextureID(GLuint texID);
 void Renderer_GenBuffers();
-void Renderer_CreateBuffers(Vec3i worldSize);
+void Renderer_CreateBuffers(int verts);
 void Renderer_DestroyBuffers();
-void Renderer_BindShiz(int vertexCount);
+void Renderer_BindShiz();
 
 #endif // Renderer_h__

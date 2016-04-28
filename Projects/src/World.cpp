@@ -234,7 +234,6 @@ uint32_t World_SafeGetBlock(uint8_t *world, int w, int h, int l, int x, int y, i
 
 void World_BuildMesh()
 {
-  int vertexCount = 0;
   int verts = 0;
   //Make a graphical representation
   for (int y = 0; y < worldHeight; y++)
@@ -247,6 +246,7 @@ void World_BuildMesh()
         if (block > 0)
         {
           float b = y / 80.0f;
+          bool drawn = false;
           if ( //basic wall solve
             (World_SafeGetBlock(world, worldWidth, worldHeight, worldLength, x + 1, y, z) == 0 &&
               World_IsBlockExposed(world, worldWidth, worldHeight, worldLength, x + 1, y, z)) ||
@@ -254,20 +254,35 @@ void World_BuildMesh()
                 World_IsBlockExposed(world, worldWidth, worldHeight, worldLength, x, y, z + 1))
             )
             //Wall
+          {
             verts += 6;
+            drawn = true;
+          }
+
           if ( //basic floor solve
             World_SafeGetBlock(world, worldWidth, worldHeight, worldLength, x, y + 1, z) == 0 &&
             World_IsBlockExposed(world, worldWidth, worldHeight, worldLength, x, y, z)
             )
             //Floor
+          {
             verts += 6;
+            drawn = true;
+          }
+
+          if (drawn)
+          {
+            if (World_SafeGetBlock(world, worldWidth, worldHeight, worldLength, x - 1, y, z) == 0)
+              verts += 6;
+            if (World_SafeGetBlock(world, worldWidth, worldHeight, worldLength, x, y, z - 1) == 0)
+              verts += 6;
+          }
         }
       }
     }
   }
 
   Renderer_DestroyBuffers();
-  Renderer_CreateBuffers(Vec3i(worldWidth, worldHeight, worldLength));
+  Renderer_CreateBuffers(verts);
 
   //Make a graphical representation
   for (int y = 0; y < worldHeight; y++)
@@ -317,8 +332,8 @@ void World_BuildMesh()
     }
   }
 
-  printf("%d verts\n", vertexCount);
-  Renderer_BindShiz(vertexCount);
+  Renderer_GenBuffers();
+  Renderer_BindShiz();
 }
 
 //Space Transforms
@@ -343,7 +358,6 @@ glm::vec2 _IsoToOrtho(glm::vec2 IsoPos)
   glm::vec2 OrthoPos((i.y + i.x) / 2, (i.y + i.x) / 2 - i.x);
   return OrthoPos;
 }
-
 
 glm::ivec3 World_ScreenToWorld(glm::vec2 ScreenPos)
 {

@@ -1,5 +1,5 @@
-#ifndef Vector_h__
-#define Vector_h__
+#ifndef VectorMath_h__
+#define VectorMath_h__
 
 
 template<typename T>

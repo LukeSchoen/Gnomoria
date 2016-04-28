@@ -1,11 +1,12 @@
 #ifndef World_h__
 #define World_h__
 
-#include "Math/Vector.h"
 #include <stdio.h>
 #include <stdint.h>
 
 #include <glm.hpp>
+
+#include "Math/Vector.h"
 
 void World_LoadWorld();
 void World_BuildMesh();

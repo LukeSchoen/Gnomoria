@@ -1,3 +1,11 @@
+#pragma region Build Options
+
+#define GLEW_STATIC
+
+#pragma endregion
+
+#pragma region includes
+
 #include "Renderer.h"
 
 #include <stdio.h>
@@ -8,16 +16,19 @@
 #include <gtc/matrix_transform.hpp>
 
 #include "SDL.h"
+#include <gl\glew.h>
+#include <SDL_opengl.h>
+#include <gl\glu.h>
+#include "SDL_opengles2.h"
 
 #include "SDL_thread.h"
 
 #include "Shaders.h"
 #include "Camera.h"
-
-#define GLEW_STATIC
+#include <time.h>
 
 //Program name
-const char* PROGRAM_NAME = "Gnomorrhea";
+const char* PROGRAM_NAME = "Gnomoria";
 
 #define testWindow
 
@@ -32,9 +43,7 @@ GLuint gProgramID = 0;
 
 //Uniform Locations
 GLuint gLocMVP = -1;
-
 GLuint gLocCAM = -1;
-
 GLint gLocVertexPos4D = -1;
 GLuint gLocTexture = -1;
 
@@ -294,6 +303,8 @@ void Renderer_Render()
 {
   //Clear color buffer
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+  return;
 
   // Bind shader program
   glUseProgram(gProgramID);
@@ -582,11 +593,11 @@ void Renderer_GenBuffers()
   glGenBuffers(1, &colPosDataGLPtr);
 }
 
-void Renderer_CreateBuffers(Vec3i worldSize)
+void Renderer_CreateBuffers(int verts)
 {
-  vertPosData = new GLfloat[worldSize.x * worldSize.y * worldSize.z * 6 * 3 * 2];
-  UVPosData = new GLfloat[worldSize.x * worldSize.y * worldSize.z * 6 * 2 * 2];
-  colPosData = new GLfloat[worldSize.x * worldSize.y * worldSize.z * 6 * 3 * 2];
+  vertPosData = new GLfloat[verts * 3];
+  UVPosData = new GLfloat[verts * 2];
+  colPosData = new GLfloat[verts * 3];
 }
 
 void Renderer_DestroyBuffers()
@@ -596,15 +607,14 @@ void Renderer_DestroyBuffers()
   delete[] colPosData;
 }
 
-void Renderer_BindShiz(int vertexCount)
+void Renderer_BindShiz()
 {
   glBindBuffer(GL_ARRAY_BUFFER, vertPosDataGLPtr);
-  glBufferData(GL_ARRAY_BUFFER, vertexCount * 3 * sizeof(GLfloat), vertPosData, GL_STATIC_DRAW);
+  glBufferData(GL_ARRAY_BUFFER, VertexCount * 3 * sizeof(GLfloat), vertPosData, GL_STATIC_DRAW);
 
   glBindBuffer(GL_ARRAY_BUFFER, UVPosDataGLPtr);
-  glBufferData(GL_ARRAY_BUFFER, vertexCount * 2 * sizeof(GLfloat), UVPosData, GL_STATIC_DRAW);
+  glBufferData(GL_ARRAY_BUFFER, VertexCount * 2 * sizeof(GLfloat), UVPosData, GL_STATIC_DRAW);
 
   glBindBuffer(GL_ARRAY_BUFFER, colPosDataGLPtr);
-  glBufferData(GL_ARRAY_BUFFER, vertexCount * 3 * sizeof(GLfloat), colPosData, GL_STATIC_DRAW);
-
+  glBufferData(GL_ARRAY_BUFFER, VertexCount * 3 * sizeof(GLfloat), colPosData, GL_STATIC_DRAW);
 }
