@@ -1,14 +1,16 @@
 #ifndef Camera_h__
 #define Camera_h__
 
-#include <glm.hpp>
+#include "Math/Vector.h"
 
 const float Deg2Rag = 1.0f / 57.2958f;
 
-static glm::vec3 camPos(0, 10, 0);
-static glm::vec2 camAng(0- Deg2Rag * 90, 0);
+struct cam : public Vec3
+{
+  cam(Vec3 Pos);
+  static cam *GetInstance();
+  void UpdateKeyboardControls(const unsigned char *keyboard);
+  void cam::UpdateMouseControls(int mousex, int mousey, bool leftClick, bool rightClick, int scroll);
+};
 
-glm::vec3 Camera_CameraKeyboardControls(const unsigned char *keyboard);
-
-glm::mat4 Camera_GetCameraMatrix();
 #endif // Camera_h__

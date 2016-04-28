@@ -1,39 +1,40 @@
 #include "World.h"
 #include "Renderer.h"
 #include "Camera.h"
-
 #include "SDL.h"
+
 
 uint8_t *world;
 int worldWidth = 1;
 int worldHeight = 1;
 int worldLength = 1;
 
-glm::vec3 World_Solve(uint8_t *world, int w, int h, int l, int x, int z)
+
+Vec3i World_Solve(int x, int z)
 {
   int y = 0;
-  x += h;
-  y += h;
-  z += h;
+  x += worldHeight;
+  y += worldHeight;
+  z += worldHeight;
 
   int giveup = 0;
-  while (((x < 0) | (y < 0) | (z < 0) | (x >= w) | (y >= h) | (z >= l)))
+  while (((x < 0) | (y < 0) | (z < 0) | (x >= worldWidth) | (y >= worldHeight) | (z >= worldLength)))
   {
     x--; y--; z--;
     giveup++;
     if (giveup > 1024)
     {
-      return glm::vec3(-1, -1, -1);
+      return Vec3i(-1, -1, -1);
     }
   }
 
   while (true)
   {
-    if ((x < 0) | (y < 0) | (z < 0) | (x >= w) | (y >= h) | (z >= l))
-      return glm::vec3(-1, -1, -1);
-    uint8_t block = world[x + y*w + z *h *l];
+    if ((x < 0) | (y < 0) | (z < 0) | (x >= worldWidth) | (y >= worldHeight) | (z >= worldLength))
+      return Vec3i(-1, -1, -1);
+    uint8_t block = world[x + y * worldWidth + z * worldHeight * worldLength];
     if (block > 0)
-      return glm::vec3(x, y, z);
+      return Vec3i(x, y, z);
     x--; y--; z--;
   }
 }
@@ -187,24 +188,6 @@ uint8_t * World_LoadFromSchematic(char *MapPath, int &width, int &height, int &d
   return world;
 }
 
-void World_Update()
-{
-  int xmouse;
-  int ymouse;
-  if (SDL_GetMouseState(&xmouse, &ymouse) & SDL_BUTTON(SDL_BUTTON_LEFT))
-  {
-    glm::ivec3 pos = World_ScreenToWorld(glm::vec2(xmouse, ymouse));
-    world[pos.x + pos.y *worldWidth + pos.z *worldWidth*worldHeight] = 0;
-    World_BuildMesh();
-  }
-
-  if (SDL_GetMouseState(&xmouse, &ymouse) & SDL_BUTTON(SDL_BUTTON_RIGHT))
-  {
-    glm::ivec3 pos = World_ScreenToWorld(glm::vec2(xmouse, ymouse));
-    world[pos.x + (pos.y + 1) *worldWidth + pos.z *worldWidth*worldHeight] = 1;
-    World_BuildMesh();
-  }
-}
 
 void World_LoadWorld()
 {
@@ -225,12 +208,20 @@ bool World_IsBlockExposed(uint8_t *world, int w, int h, int l, int x, int y, int
   }
 }
 
-uint32_t World_SafeGetBlock(uint8_t *world, int w, int h, int l, int x, int y, int z)
+uint32_t World_GetBlock(Vec3i pos)
 {
-  if ((x < 0) | (y < 0) | (z < 0) | (x >= w) | (y >= h) | (z >= l))
+  if ((pos.x < 0) | (pos.y < 0) | (pos.z < 0) | (pos.x >= worldWidth) | (pos.y >= worldHeight) | (pos.z >= worldLength))
     return 0;
-  return world[x + y*w + z *h *l];
+  return world[pos.x + pos.y * worldWidth + pos.z * worldHeight * worldLength];
 }
+
+void World_SetBlock(Vec3i pos, uint32_t blockID)
+{
+  if ((pos.x < 0) | (pos.y < 0) | (pos.z < 0) | (pos.x >= worldWidth) | (pos.y >= worldHeight) | (pos.z >= worldLength))
+    return;
+  world[pos.x + pos.y * worldWidth + pos.z * worldHeight * worldLength] = blockID;
+}
+
 
 void World_BuildMesh()
 {
@@ -248,9 +239,9 @@ void World_BuildMesh()
           float b = y / 80.0f;
           bool drawn = false;
           if ( //basic wall solve
-            (World_SafeGetBlock(world, worldWidth, worldHeight, worldLength, x + 1, y, z) == 0 &&
+            (World_GetBlock(Vec3i(x + 1, y, z)) == 0 &&
               World_IsBlockExposed(world, worldWidth, worldHeight, worldLength, x + 1, y, z)) ||
-              (World_SafeGetBlock(world, worldWidth, worldHeight, worldLength, x, y, z + 1) == 0 &&
+              (World_GetBlock(Vec3i(x, y, z+1)) == 0 &&
                 World_IsBlockExposed(world, worldWidth, worldHeight, worldLength, x, y, z + 1))
             )
             //Wall
@@ -260,7 +251,7 @@ void World_BuildMesh()
           }
 
           if ( //basic floor solve
-            World_SafeGetBlock(world, worldWidth, worldHeight, worldLength, x, y + 1, z) == 0 &&
+            World_GetBlock(Vec3i(x, y + 1, z)) == 0 &&
             World_IsBlockExposed(world, worldWidth, worldHeight, worldLength, x, y, z)
             )
             //Floor
@@ -271,9 +262,9 @@ void World_BuildMesh()
 
           if (drawn)
           {
-            if (World_SafeGetBlock(world, worldWidth, worldHeight, worldLength, x - 1, y, z) == 0)
+            if (World_GetBlock(Vec3i(x - 1, y, z)) == 0)
               verts += 6;
-            if (World_SafeGetBlock(world, worldWidth, worldHeight, worldLength, x, y, z - 1) == 0)
+            if (World_GetBlock(Vec3i(x, y, z-1)) == 0)
               verts += 6;
           }
         }
@@ -301,10 +292,10 @@ void World_BuildMesh()
           float b = y / 80.0f;
           bool drawn = false;
           if ( //basic wall solve
-            (World_SafeGetBlock(world, worldWidth, worldHeight, worldLength, x + 1, y, z) == 0 &&
+            (World_GetBlock(Vec3i(x + 1, y, z)) == 0 &&
               World_IsBlockExposed(world, worldWidth, worldHeight, worldLength, x + 1, y, z)) ||
-              (World_SafeGetBlock(world, worldWidth, worldHeight, worldLength, x, y, z + 1) == 0 &&
-                World_IsBlockExposed(world, worldWidth, worldHeight, worldLength, x, y, z + 1))
+            (World_GetBlock(Vec3i(x, y, z + 1)) == 0 &&
+              World_IsBlockExposed(world, worldWidth, worldHeight, worldLength, x, y, z + 1))
             )
           {
             Renderer_AddTile(x, y, z, { b, b, b }, 32 + block);
@@ -312,7 +303,7 @@ void World_BuildMesh()
           }
 
           if ( //basic floor solve
-            World_SafeGetBlock(world, worldWidth, worldHeight, worldLength, x, y + 1, z) == 0 &&
+            World_GetBlock(Vec3i(x, y + 1, z)) == 0 &&
             World_IsBlockExposed(world, worldWidth, worldHeight, worldLength, x, y, z)
             )
           {
@@ -321,9 +312,9 @@ void World_BuildMesh()
           }
           if (drawn)
           {
-            if (World_SafeGetBlock(world, worldWidth, worldHeight, worldLength, x - 1, y, z) == 0)
-              Renderer_AddTile(x, y, z, { b, b, b }, 5, 0, -1);
-            if (World_SafeGetBlock(world, worldWidth, worldHeight, worldLength, x, y, z - 1) == 0)
+            if (World_GetBlock(Vec3i(x - 1, y, z)) == 0)
+              Renderer_AddTile(x, y, z, { b, b, b }, 5, 0, -1);   
+            if (World_GetBlock(Vec3i(x, y, z - 1)) == 0)
               Renderer_AddTile(x, y, z, { b, b, b }, 6, 0, -1);
           }
 
@@ -334,35 +325,4 @@ void World_BuildMesh()
 
   Renderer_GenBuffers();
   Renderer_BindShiz();
-}
-
-//Space Transforms
-glm::vec2 _ScreenToDevice(glm::vec2 ScreenPos)
-{
-  return (glm::vec2(ScreenPos.x / (SCREEN_WIDTH + 0.0), ScreenPos.y / (SCREEN_HEIGHT + 0.0)));
-}
-
-glm::vec2 _DeviceToIso(glm::vec2 mousePos)
-{
-  float x = mousePos.x * 2 - 1;
-  float y = mousePos.y * 2 - 1;
-  x = camPos.x + x *camPos.y *(SCREEN_WIDTH + 0.0f) / SCREEN_HEIGHT;
-  y = camPos.z + y *camPos.y;
-  return glm::vec2(x, y * 2);
-}
-
-glm::vec2 _IsoToOrtho(glm::vec2 IsoPos)
-{
-  glm::vec2 &i = IsoPos;
-  i -= glm::vec2(1, 2);
-  glm::vec2 OrthoPos((i.y + i.x) / 2, (i.y + i.x) / 2 - i.x);
-  return OrthoPos;
-}
-
-glm::ivec3 World_ScreenToWorld(glm::vec2 ScreenPos)
-{
-  glm::vec2 DeviceSpace = _ScreenToDevice(ScreenPos);
-  glm::vec2 IsoSpace = _DeviceToIso(DeviceSpace);
-  glm::vec2 OrthoSpace = _IsoToOrtho(IsoSpace);
-  return World_Solve(world, worldWidth, worldHeight, worldLength, (int)OrthoSpace.x, (int)OrthoSpace.y);
 }

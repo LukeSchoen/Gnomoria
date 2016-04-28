@@ -6,8 +6,6 @@
 
 #pragma region includes
 
-#include "Renderer.h"
-
 #include <stdio.h>
 #include <string>
 #include <tchar.h>
@@ -27,6 +25,8 @@
 #include "Camera.h"
 #include <time.h>
 
+#include "Renderer.h"
+
 //Program name
 const char* PROGRAM_NAME = "Gnomoria";
 
@@ -42,10 +42,10 @@ SDL_GLContext gContext;
 GLuint gProgramID = 0;
 
 //Uniform Locations
-GLuint gLocMVP = -1;
 GLuint gLocCAM = -1;
 GLint gLocVertexPos4D = -1;
 GLuint gLocTexture = -1;
+
 
 GLuint vertPosDataGLPtr = 0;
 GLuint colPosDataGLPtr = 0;
@@ -55,6 +55,159 @@ GLfloat* colPosData = nullptr;
 GLfloat* UVPosData = nullptr;
 GLuint VertexCount = 0;
 GLuint TextureID;
+
+bool _TexelExists(uint8_t *img, int w, int h, int x, int y);
+
+RenderObject::RenderObject(int maxRenderSize)
+{
+  ReAllocate(maxRenderSize);
+}
+
+void RenderObject::ReAllocate(int maxRenderSize)
+{
+  delete[]PosData;
+  delete[]colData;
+  delete[]uvsData;
+  float* PosData = new float[maxRenderSize * 3];
+  float* colData = new float[maxRenderSize * 3];
+  float* uvsData = new float[maxRenderSize * 2];
+  vertexCount = 0;
+  maxVertexCount = maxRenderSize;
+}
+
+
+void RenderObject::AddTriangle(Vert v1, Vert v2, Vert v3)
+{
+  Vec3 &p1 = v1.position;
+  Vec3 &p2 = v2.position;
+  Vec3 &p3 = v3.position;
+
+  Vec3 &c1 = v1.color;
+  Vec3 &c2 = v2.color;
+  Vec3 &c3 = v3.color;
+
+  Vec2 &uv1 = v1.uvs;
+  Vec2 &uv2 = v2.uvs;
+  Vec2 &uv3 = v3.uvs;
+
+  PosData[vertexCount * 3 + 0] = p1.x;
+  PosData[vertexCount * 3 + 1] = p1.y;
+  PosData[vertexCount * 3 + 2] = p1.z;
+  colData[vertexCount * 3 + 0] = c1.x;
+  colData[vertexCount * 3 + 1] = c1.y;
+  uvsData[vertexCount * 3 + 2] = c1.z;
+  uvsData[vertexCount * 2 + 0] = uv1.x;
+  uvsData[vertexCount * 2 + 1] = uv1.y;
+  vertexCount++;
+
+  PosData[vertexCount * 3 + 0] = p2.x;
+  PosData[vertexCount * 3 + 1] = p2.y;
+  PosData[vertexCount * 3 + 2] = p2.z;
+  colData[vertexCount * 3 + 0] = c2.x;
+  colData[vertexCount * 3 + 1] = c2.y;
+  colData[vertexCount * 3 + 2] = c2.z;
+  uvsData[vertexCount * 2 + 0] = uv2.x;
+  uvsData[vertexCount * 2 + 1] = uv2.y;
+  vertexCount++;
+
+  PosData[vertexCount * 3 + 0] = p3.x;
+  PosData[vertexCount * 3 + 1] = p3.y;
+  PosData[vertexCount * 3 + 2] = p3.z;
+  colData[vertexCount * 3 + 0] = c3.x;
+  colData[vertexCount * 3 + 1] = c3.y;
+  colData[vertexCount * 3 + 2] = c3.z;
+  uvsData[vertexCount * 2 + 0] = uv3.x;
+  uvsData[vertexCount * 2 + 1] = uv3.y;
+  vertexCount++;
+}
+
+void RenderObject::AddQuad(Vert v1, Vert v2, Vert v3, Vert v4)
+{
+  AddTriangle(v1, v2, v4);
+  AddTriangle(v2, v3, v4);
+}
+
+void RenderObject::SetTexture(char *bmpFile)
+{
+  SDL_Surface *tex;
+  GLuint texID = -1;
+  if (tex = SDL_LoadBMP(bmpFile))
+  {
+    glGenTextures(1, &texID);
+    //Turn pink pixels transparent and upload texture to GL
+    int w = tex->w;
+    int h = tex->h;
+    uint8_t *img = new uint8_t[w * h * 4];
+    uint8_t* pixels = (uint8_t*)tex->pixels;
+    for (int y = 0; y < h; y++)
+    {
+      for (int x = 0; x < w; x++)
+      {
+        uint8_t r = pixels[(x + y * w) * 3 + 2];
+        uint8_t g = pixels[(x + y * w) * 3 + 1];
+        uint8_t b = pixels[(x + y * w) * 3 + 0];
+        uint8_t a = 255;
+
+        if (r == 255 && g == 0 && b == 255)
+        {
+          //Transparent
+          a = 0;
+          //Find neighbor and use color
+          int fixRadius = 8;
+          //for (int ny = -1; ny <= 1; ny++)
+          for (int ny = -fixRadius; ny <= fixRadius; ny++)
+          {
+            //for (int nx = -1; nx <= 1; nx++)
+            for (int nx = -fixRadius; nx <= fixRadius; nx++)
+            {
+              if (_TexelExists(pixels, w, h, x + nx, y + ny))
+              {
+                r = pixels[(x + nx + (y + ny) * w) * 3 + 2];
+                g = pixels[(x + nx + (y + ny) * w) * 3 + 1];
+                b = pixels[(x + nx + (y + ny) * w) * 3 + 0];
+                break;
+              }
+            }
+          }
+
+        }
+
+        img[(x + y * w) * 4 + 0] = r;
+        img[(x + y * w) * 4 + 1] = g;
+        img[(x + y * w) * 4 + 2] = b;
+        img[(x + y * w) * 4 + 3] = a;
+
+      }
+    }
+
+    glGenTextures(1, &texID);
+    glBindTexture(GL_TEXTURE_2D, texID);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, tex->w, tex->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, img);
+    glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glGenerateMipmap(GL_TEXTURE_2D);
+
+    SDL_FreeSurface(tex);
+    delete[] img;
+  }
+  texture = texID;
+}
+
+void RenderObject::UploadToGPU()
+{
+
+
+}
+
+void RenderObject::Render()
+{
+
+
+}
 
 
 void _printProgramLog(GLuint program)
@@ -211,7 +364,6 @@ bool _initGL()
   }
 
   //Model View Projection Shader parameter
-  gLocMVP = glGetUniformLocation(gProgramID, "MVP");
   gLocCAM = glGetUniformLocation(gProgramID, "CAM");
 
   gLocTexture = glGetUniformLocation(gProgramID, "TextureSampler");
@@ -304,43 +456,17 @@ void Renderer_Render()
   //Clear color buffer
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-  return;
-
   // Bind shader program
   glUseProgram(gProgramID);
-
-  // Projection matrix (Field of View, Aspect Ratio, NearPlane, FarPlane)
-  glm::mat4 Projection = glm::perspective(45.0f, (SCREEN_WIDTH + 0.0f) / SCREEN_HEIGHT, 0.1f, 10000.0f);
-
-  // Camera matrix
-  glm::mat4 View;
-
-  // Model Matrix
-  glm::mat4 Model = glm::mat4(1.0f);
-
-  static float rot = 0.0;
-  rot = rot - 0.00333f;
-
-  // Model View Projection Matrix
-  glm::mat4 MVP = Projection * View * Model;
 
   //Bind Vert Shader Attributes
   glEnableVertexAttribArray(0);
   glEnableVertexAttribArray(1);
   glEnableVertexAttribArray(2);
 
-  //Reset camera and depth buffer
-  glClear(GL_DEPTH_BUFFER_BIT);
-  View = Camera_GetCameraMatrix();
-  Model = glm::mat4(1.0f);
-  MVP = Projection * View * Model;
-
-  glUniformMatrix4fv(gLocMVP, 1, GL_FALSE, &MVP[0][0]);
-
-  glm::vec4 ShaderCam(camPos, (SCREEN_HEIGHT*1.0f) / SCREEN_WIDTH);
+  cam *c = cam::GetInstance();
+  glm::vec4 ShaderCam(c->x, c->y, c->z, (SCREEN_HEIGHT+0.0f) / SCREEN_WIDTH);
   glUniform4fv(gLocCAM, 1, (GLfloat*)&ShaderCam);
-
-  //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
   //vertex positions
   glBindBuffer(GL_ARRAY_BUFFER, vertPosDataGLPtr);

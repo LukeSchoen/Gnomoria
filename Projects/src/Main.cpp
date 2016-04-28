@@ -1,12 +1,11 @@
 #include "Renderer.h"
 #include "World.h"
 #include "Camera.h"
-
 #include "SDL.h"
-
 #include <glm.hpp>
 #include <stdio.h>
 #include <time.h>
+
 
 //Main Loop
 int wmain(int argc, char *argv[])
@@ -20,17 +19,14 @@ int wmain(int argc, char *argv[])
 
   World_LoadWorld();
 
-  //Take control of the cursor
-  //SDL_SetRelativeMouseMode(SDL_TRUE);
+  cam &camera = *cam::GetInstance();
+  camera = Vec3(0, 10, 0);
 
   //Main loop flag
   bool running = true;
 
   //Event handler
   SDL_Event e;
-
-  //Enable text input
-  //SDL_StartTextInput();
 
   while (running)
   {
@@ -53,24 +49,28 @@ int wmain(int argc, char *argv[])
       }
     }
 
+    //Handle mouse input
+    int mousex;
+    int mousey;
+    bool mouseleft;
+    bool mouseright;
+    int scroll = 0;
+    uint32_t mouseflags = SDL_GetMouseState(&mousex, &mousey);
+    mouseleft = mouseflags & SDL_BUTTON(SDL_BUTTON_LEFT);
+    mouseright = mouseflags & SDL_BUTTON(SDL_BUTTON_RIGHT);
+    camera.UpdateMouseControls(mousex, mousex, mouseleft, mouseright, scroll);
+
     //Handle keyboard input
     const static unsigned char *keyboard = SDL_GetKeyboardState(NULL);
-    glm::vec3 camOff;
+    camera.UpdateKeyboardControls(keyboard);
+    if (camera.y > 80) camera.y = 80;
+    if (camera.y < 6) camera.y = 6;
 
-    {//3d movement
-      camOff = Camera_CameraKeyboardControls(keyboard);
-      camPos += camOff;
 
-      if (camPos.y > 80)
-        camPos.y = 80;
-
-      if (camPos.y < 6)
-        camPos.y = 6;
-
-    }
 
     //Render
     Renderer_Render();
+    Renderer_Swap();
 
     static int lastFrame = 0;
     static int frames = 0;

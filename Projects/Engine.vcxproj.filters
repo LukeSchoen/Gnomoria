@@ -57,6 +57,9 @@
     <ClInclude Include="src\World.h">
       <Filter>Source\Game\World</Filter>
     </ClInclude>
+    <ClInclude Include="src\Transform.h">
+      <Filter>Source\Engine\Render</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Renderer.cpp">

@@ -1,54 +1,59 @@
 #include "Camera.h"
 #include "Renderer.h"
 
-#include <gtx/rotate_vector.hpp>
-#include <gtc/matrix_transform.hpp>
+#include "Transform.h"
+
 #include "SDL_keycode.h"
 
-glm::vec3 Camera_CameraKeyboardControls(const unsigned char *keyboard)
+static cam *instance;
+
+cam::cam(Vec3 Pos)
 {
-  float MoveSpeed = camPos.y*0.03f;
-  glm::vec3 mov(0.0f, 0.0f, 1.0f);
-  glm::vec3 finalMov(0.0f, 0.0f, 0.0f);
+  x = Pos.x;
+  y = Pos.y;
+  z = Pos.z;
+}
+
+cam *cam::GetInstance()
+{
+  if (!instance)
+    instance = new cam(Vec3(0, 0, 0));
+  return instance;
+}
+
+void cam::UpdateKeyboardControls(const unsigned char *keyboard)
+{
+  float MoveSpeed = y * 0.03f;
 
   // movement speed
   if (keyboard[SDL_SCANCODE_LSHIFT]) MoveSpeed *= 2;
   if (keyboard[SDL_SCANCODE_LCTRL]) MoveSpeed /= 2;
 
+  if (keyboard[SDL_SCANCODE_W]) z -= MoveSpeed;
+  if (keyboard[SDL_SCANCODE_S]) z += MoveSpeed;
 
-  // Up / Down
-  mov = glm::vec3(0.0, -1.0, 0.0);
-  mov = glm::rotate(mov, camAng.x, glm::vec3(1.0, 0, 0));
-  mov = glm::rotate(mov, camAng.y, glm::vec3(0, 1.0, 0));
+  if (keyboard[SDL_SCANCODE_A]) x -= MoveSpeed;
+  if (keyboard[SDL_SCANCODE_D]) x += MoveSpeed;
 
-  if (keyboard[SDL_SCANCODE_W]) finalMov -= mov;
-  if (keyboard[SDL_SCANCODE_S]) finalMov += mov;
-
-
-  // left / right
-  mov = glm::vec3(1.0, 0.0, 0.0);
-  mov = glm::rotate(mov, camAng.x, glm::vec3(1.0, 0, 0));
-  mov = glm::rotate(mov, camAng.y, glm::vec3(0, 1.0, 0));
-
-  if (keyboard[SDL_SCANCODE_A]) finalMov -= mov;
-  if (keyboard[SDL_SCANCODE_D]) finalMov += mov;
-
-
-  // Towards / Away
-  if (keyboard[SDL_SCANCODE_E]) finalMov += glm::vec3(0.0, 1.0, 0.0);
-  if (keyboard[SDL_SCANCODE_X]) finalMov -= glm::vec3(0.0, 1.0, 0.0);
-
-  // create and return velocity vector
-  if (glm::length(finalMov) >= 0.05)
-    finalMov = glm::normalize(finalMov) * MoveSpeed;
-  return finalMov;
+  if (keyboard[SDL_SCANCODE_X]) y -= MoveSpeed;
+  if (keyboard[SDL_SCANCODE_E]) y += MoveSpeed;
 }
 
-glm::mat4 Camera_GetCameraMatrix()
+
+void cam::UpdateMouseControls(int mousex, int mousey, bool leftClick, bool rightClick, int scroll)
 {
-  glm::mat4 cam;
-  cam = glm::rotate(cam, -camAng.x, glm::vec3(1.0, 0, 0));
-  cam = glm::rotate(cam, -camAng.y, glm::vec3(0, 1.0, 0));
-  cam = glm::translate(cam, -camPos);
-  return cam;
+  
+  if (leftClick)
+  {
+    Vec3i pos = Transform_ScreenToWorld(Vec2i(mousex, mousey));
+    World_SetBlock(pos, 0);
+    World_BuildMesh();
+  }
+
+  if (rightClick)
+  {
+    Vec3i pos = Transform_ScreenToWorld(Vec2i(mousex, mousey));
+    World_SetBlock(pos - Vec3i(0,1,0), 1);
+    World_BuildMesh();
+  }
 }

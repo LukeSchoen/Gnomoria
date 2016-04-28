@@ -25,6 +25,7 @@
     <ClInclude Include="src\RealTimeEngine.h" />
     <ClInclude Include="src\Renderer.h" />
     <ClInclude Include="src\Shaders.h" />
+    <ClInclude Include="src\Transform.h" />
     <ClInclude Include="src\World.h" />
   </ItemGroup>
   <ItemGroup>
