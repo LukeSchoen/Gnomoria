@@ -54,6 +54,9 @@
     <ClInclude Include="src\Shaders.h">
       <Filter>Source\Engine\Render</Filter>
     </ClInclude>
+    <ClInclude Include="src\World.h">
+      <Filter>Source\Game\World</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Renderer.cpp">
@@ -67,6 +70,12 @@
     </ClCompile>
     <ClCompile Include="src\RealTimeEngine.cpp">
       <Filter>Source\Engine\RealTime</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Camera.cpp">
+      <Filter>Source\Game\World</Filter>
+    </ClCompile>
+    <ClCompile Include="src\World.cpp">
+      <Filter>Source\Game\World</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

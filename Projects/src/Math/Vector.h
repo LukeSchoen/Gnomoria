@@ -1,3 +1,6 @@
+#ifndef Vector_h__
+#define Vector_h__
+
 
 template<typename T>
 struct Vector2
@@ -59,7 +62,8 @@ struct Vector3
 {
 	union
 	{
-		struct { T x, y, z; };
+    struct { T x, y, z; };
+    struct { T r, g, b; };
 		T components[3];
 	};
 
@@ -137,3 +141,4 @@ typedef Vector2<int> Vec2i;
 
 typedef Vector3<float> Vec3;
 typedef Vector3<int> Vec3i;
+#endif // Vector_h__
