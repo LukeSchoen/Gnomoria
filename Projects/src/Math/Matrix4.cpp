@@ -79,7 +79,7 @@ void Matrix4::Ortho(float left, float right, float bottom, float top)
 void Matrix4::Perspective(float FOV, float aspectRatio, float near, float far)
 {
 	static const float zRange = near - far;
-	static const float tanHalfFOV = tanf(toRadian(FOV / 2.0f));
+	static const float tanHalfFOV = tanf(ToRadian(FOV / 2.0f));
 
 	m[0][0] = 1.0f / (tanHalfFOV * aspectRatio);
 	m[0][1] = 0.0f;

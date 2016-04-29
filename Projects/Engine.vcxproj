@@ -20,7 +20,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Camera.h" />
+    <ClInclude Include="src\Math\GMMath.h" />
+    <ClInclude Include="src\Math\MathUtil.h" />
+    <ClInclude Include="src\Math\Matrix4.h" />
     <ClInclude Include="src\Math\Vector.h" />
+    <ClInclude Include="src\Math\Vector2.h" />
+    <ClInclude Include="src\Math\Vector3.h" />
+    <ClInclude Include="src\Math\Vector4.h" />
     <ClInclude Include="src\PerlinNoise.h" />
     <ClInclude Include="src\RealTimeEngine.h" />
     <ClInclude Include="src\Renderer.h" />
@@ -32,6 +38,7 @@
   <ItemGroup>
     <ClCompile Include="src\Camera.cpp" />
     <ClCompile Include="src\Main.cpp" />
+    <ClCompile Include="src\Math\Matrix4.cpp" />
     <ClCompile Include="src\PerlinNoise.cpp" />
     <ClCompile Include="src\RealTimeEngine.cpp" />
     <ClCompile Include="src\Renderer.cpp" />

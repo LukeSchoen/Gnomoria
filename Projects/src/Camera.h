@@ -10,7 +10,7 @@ struct cam : public Vec3
   cam(Vec3 Pos);
   static cam *GetInstance();
   void UpdateKeyboardControls(const unsigned char *keyboard);
-  void cam::UpdateMouseControls(int mousex, int mousey, bool leftClick, bool rightClick, int scroll);
+  void UpdateMouseControls(int mousex, int mousey, bool leftClick, bool rightClick, int scroll);
 };
 
 #endif // Camera_h__

@@ -3,7 +3,7 @@
 #include "Transform.h"
 #include "SDL_keycode.h"
 
-static cam *instance;
+//static cam *instance;
 
 cam::cam(Vec3 Pos)
 {
@@ -14,6 +14,7 @@ cam::cam(Vec3 Pos)
 
 cam *cam::GetInstance()
 {
+  static cam *instance;
   if (!instance)
     instance = new cam(Vec3(0, 0, 0));
   return instance;

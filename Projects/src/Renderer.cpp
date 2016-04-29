@@ -65,12 +65,9 @@ void RenderObject::ReAllocate(int maxRenderSize)
 {
   if (maxRenderSize > maxVertexCount)
   {
-    delete[]PosData;
-    delete[]colData;
-    delete[]uvsData;
-    PosData = new float[maxRenderSize * 3];
-    colData = new float[maxRenderSize * 3];
-    uvsData = new float[maxRenderSize * 2];
+    PosData = (float*)realloc(PosData, sizeof(float) * maxRenderSize * 3);
+    colData = (float*)realloc(colData, sizeof(float) * maxRenderSize * 3);
+    uvsData = (float*)realloc(uvsData, sizeof(float) * maxRenderSize * 2);
     vertexCount = 0;
     maxVertexCount = maxRenderSize;
   }

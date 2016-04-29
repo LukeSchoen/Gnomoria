@@ -39,9 +39,6 @@
     <ClInclude Include="src\Renderer.h">
       <Filter>Source\Engine\Render</Filter>
     </ClInclude>
-    <ClInclude Include="src\Math\Vector.h">
-      <Filter>Source\Math</Filter>
-    </ClInclude>
     <ClInclude Include="src\Camera.h">
       <Filter>Source\Game\World</Filter>
     </ClInclude>
@@ -62,6 +59,27 @@
     </ClInclude>
     <ClInclude Include="src\Text.h">
       <Filter>Source\Engine\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Math\GMMath.h">
+      <Filter>Source\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Math\MathUtil.h">
+      <Filter>Source\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Math\Matrix4.h">
+      <Filter>Source\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Math\Vector.h">
+      <Filter>Source\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Math\Vector2.h">
+      <Filter>Source\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Math\Vector3.h">
+      <Filter>Source\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Math\Vector4.h">
+      <Filter>Source\Math</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -85,6 +103,9 @@
     </ClCompile>
     <ClCompile Include="src\Text.cpp">
       <Filter>Source\Engine\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Math\Matrix4.cpp">
+      <Filter>Source\Math</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
