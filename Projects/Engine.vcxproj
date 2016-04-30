@@ -25,6 +25,7 @@
     <ClInclude Include="src\RealTimeEngine.h" />
     <ClInclude Include="src\Renderer.h" />
     <ClInclude Include="src\Shaders.h" />
+    <ClInclude Include="src\Text.h" />
     <ClInclude Include="src\Transform.h" />
     <ClInclude Include="src\World.h" />
   </ItemGroup>
@@ -34,6 +35,7 @@
     <ClCompile Include="src\PerlinNoise.cpp" />
     <ClCompile Include="src\RealTimeEngine.cpp" />
     <ClCompile Include="src\Renderer.cpp" />
+    <ClCompile Include="src\Text.cpp" />
     <ClCompile Include="src\World.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

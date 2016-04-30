@@ -196,3 +196,4 @@ paket-files/
 .idea/
 *.sln.imlf
 /Assets/Textures/GnomeTexGen.001
+/Assets/Textures/GnomeFontGen.001

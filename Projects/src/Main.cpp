@@ -1,6 +1,7 @@
 #include "Renderer.h"
 #include "World.h"
 #include "Camera.h"
+#include "Text.h"
 #include "SDL.h"
 #include <glm.hpp>
 #include <stdio.h>
@@ -18,6 +19,7 @@ int wmain(int argc, char *argv[])
   }
 
   World_LoadWorld();
+  Text_Initialize();
 
   cam &camera = *cam::GetInstance();
   camera = Vec3(0, 10, 0);
@@ -71,6 +73,9 @@ int wmain(int argc, char *argv[])
     //Render
     Renderer_Clear();
     World_Draw();
+
+    Text_Draw("Gnomoria!", Vec2(-60.0f,-85.0f), 120 );
+
     Renderer_Swap();
 
     static int lastFrame = 0;

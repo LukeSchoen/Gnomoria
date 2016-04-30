@@ -63,7 +63,7 @@ RenderObject::RenderObject(int maxRenderSize = 0)
 
 void RenderObject::ReAllocate(int maxRenderSize)
 {
-  if (maxRenderSize > 0)
+  if (maxRenderSize > maxVertexCount)
   {
     delete[]PosData;
     delete[]colData;
@@ -125,6 +125,11 @@ void RenderObject::AddQuad(Vert v1, Vert v2, Vert v3, Vert v4)
 {
   AddTriangle(v1, v2, v4);
   AddTriangle(v2, v3, v4);
+}
+
+void RenderObject::Clear()
+{
+  vertexCount = 0;
 }
 
 void RenderObject::AssignTexture(char *bmpFile)
@@ -254,6 +259,12 @@ void RenderObject::Render()
   glUseProgram(NULL);
 }
 
+void RenderObject::Destroy()
+{
+  delete[]PosData;
+  delete[]colData;
+  delete[]uvsData;
+}
 
 
 

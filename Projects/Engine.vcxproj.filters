@@ -60,6 +60,9 @@
     <ClInclude Include="src\Transform.h">
       <Filter>Source\Engine\Render</Filter>
     </ClInclude>
+    <ClInclude Include="src\Text.h">
+      <Filter>Source\Engine\GUI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Renderer.cpp">
@@ -79,6 +82,9 @@
     </ClCompile>
     <ClCompile Include="src\World.cpp">
       <Filter>Source\Game\World</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Text.cpp">
+      <Filter>Source\Engine\GUI</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -40,9 +40,11 @@ struct RenderObject
   void ReAllocate(int newMaxRenderSize /*In number of verticies*/);
   void AddTriangle(Vert v1, Vert v2, Vert v3);
   void AddQuad(Vert v1, Vert v2, Vert v3, Vert v4);
+  void Clear();
   void AssignTexture(char *bmpFile);
   void UploadToGPU();
   void Render();
+  void Destroy();
 private:
   float* PosData = nullptr;
   float* colData = nullptr;

@@ -1,6 +1,5 @@
 #include "World.h"
 #include "Renderer.h"
-#include "SDL.h"
 
 uint8_t *world;
 int worldWidth = 1;
@@ -215,7 +214,7 @@ uint8_t * World_LoadFromSchematic(char *MapPath, int &width, int &height, int &d
 
 void World_LoadWorld()
 {
-  world = World_LoadFromSchematic("Assets\\schematics\\world.schematic", worldWidth, worldHeight, worldLength);
+  world = World_LoadFromSchematic("Assets\\schematics\\small.schematic", worldWidth, worldHeight, worldLength);
   World_BuildMesh();
 }
 
@@ -315,6 +314,7 @@ void World_BuildMesh()
   }
 
   worldMesh->ReAllocate(verts);
+  worldMesh->Clear();
 
   //Make a graphical representation
   for (int y = 0; y < worldHeight; y++)
