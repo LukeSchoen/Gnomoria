@@ -1,8 +1,6 @@
 #include "Camera.h"
 #include "Renderer.h"
-
 #include "Transform.h"
-
 #include "SDL_keycode.h"
 
 static cam *instance;
@@ -39,21 +37,25 @@ void cam::UpdateKeyboardControls(const unsigned char *keyboard)
   if (keyboard[SDL_SCANCODE_E]) y += MoveSpeed;
 }
 
-
 void cam::UpdateMouseControls(int mousex, int mousey, bool leftClick, bool rightClick, int scroll)
 {
-  
-  if (leftClick)
+  static bool lastLMouseDown = false;
+  static bool lastRMouseDown = false;
+
+  if (leftClick && (!lastLMouseDown))
   {
     Vec3i pos = Transform_ScreenToWorld(Vec2i(mousex, mousey));
     World_SetBlock(pos, 0);
     World_BuildMesh();
   }
 
-  if (rightClick)
+  if (rightClick && (!lastRMouseDown))
   {
     Vec3i pos = Transform_ScreenToWorld(Vec2i(mousex, mousey));
-    World_SetBlock(pos - Vec3i(0,1,0), 1);
-    World_BuildMesh();
+    World_SetBlock(pos + Vec3i(0,1,0), 1);    World_BuildMesh();
   }
+
+  lastLMouseDown = leftClick;
+  lastRMouseDown = rightClick;
+
 }

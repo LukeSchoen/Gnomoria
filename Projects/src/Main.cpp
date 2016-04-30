@@ -58,7 +58,7 @@ int wmain(int argc, char *argv[])
     uint32_t mouseflags = SDL_GetMouseState(&mousex, &mousey);
     mouseleft = mouseflags & SDL_BUTTON(SDL_BUTTON_LEFT);
     mouseright = mouseflags & SDL_BUTTON(SDL_BUTTON_RIGHT);
-    camera.UpdateMouseControls(mousex, mousex, mouseleft, mouseright, scroll);
+    camera.UpdateMouseControls(mousex, mousey, mouseleft, mouseright, scroll);
 
     //Handle keyboard input
     const static unsigned char *keyboard = SDL_GetKeyboardState(NULL);
@@ -69,7 +69,8 @@ int wmain(int argc, char *argv[])
 
 
     //Render
-    Renderer_Render();
+    Renderer_Clear();
+    World_Draw();
     Renderer_Swap();
 
     static int lastFrame = 0;

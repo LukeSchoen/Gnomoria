@@ -1,14 +1,13 @@
 #include "World.h"
 #include "Renderer.h"
-#include "Camera.h"
 #include "SDL.h"
-
 
 uint8_t *world;
 int worldWidth = 1;
 int worldHeight = 1;
 int worldLength = 1;
 
+RenderObject *worldMesh = nullptr;
 
 Vec3i World_Solve(int x, int z)
 {
@@ -36,6 +35,32 @@ Vec3i World_Solve(int x, int z)
     if (block > 0)
       return Vec3i(x, y, z);
     x--; y--; z--;
+  }
+}
+
+uint32_t World_GetBlock(Vec3i pos)
+{
+  if ((pos.x < 0) | (pos.y < 0) | (pos.z < 0) | (pos.x >= worldWidth) | (pos.y >= worldHeight) | (pos.z >= worldLength))
+    return 0;
+  return world[pos.x + pos.y * worldWidth + pos.z * worldHeight * worldLength];
+}
+
+void World_SetBlock(Vec3i pos, uint32_t blockID)
+{
+  if ((pos.x < 0) | (pos.y < 0) | (pos.z < 0) | (pos.x >= worldWidth) | (pos.y >= worldHeight) | (pos.z >= worldLength))
+    return;
+  world[pos.x + pos.y * worldWidth + pos.z * worldHeight * worldLength] = blockID;
+}
+
+bool World_IsBlockExposed(uint8_t *world, int w, int h, int l, int x, int y, int z)
+{
+  while (true)
+  {
+    x++; y++; z++;
+    if ((x < 0) | (y < 0) | (z < 0) | (x >= w) | (y >= h) | (z >= l))
+      return true;
+    if (world[x + y*w + z *h *l] > 0)
+      return false;
   }
 }
 
@@ -188,43 +213,60 @@ uint8_t * World_LoadFromSchematic(char *MapPath, int &width, int &height, int &d
   return world;
 }
 
-
 void World_LoadWorld()
 {
-  Renderer_SetTextureID(Renderer_LoadTexture("Assets\\Textures\\Texture.bmp"));
-  world = World_LoadFromSchematic("Assets\\schematics\\small.schematic", worldWidth, worldHeight, worldLength);
+  world = World_LoadFromSchematic("Assets\\schematics\\world.schematic", worldWidth, worldHeight, worldLength);
   World_BuildMesh();
 }
 
-bool World_IsBlockExposed(uint8_t *world, int w, int h, int l, int x, int y, int z)
-{
-  while (true)
-  {
-    x++; y++; z++;
-    if ((x < 0) | (y < 0) | (z < 0) | (x >= w) | (y >= h) | (z >= l))
-      return true;
-    if (world[x + y*w + z *h *l] > 0)
-      return false;
-  }
-}
 
-uint32_t World_GetBlock(Vec3i pos)
-{
-  if ((pos.x < 0) | (pos.y < 0) | (pos.z < 0) | (pos.x >= worldWidth) | (pos.y >= worldHeight) | (pos.z >= worldLength))
-    return 0;
-  return world[pos.x + pos.y * worldWidth + pos.z * worldHeight * worldLength];
-}
 
-void World_SetBlock(Vec3i pos, uint32_t blockID)
-{
-  if ((pos.x < 0) | (pos.y < 0) | (pos.z < 0) | (pos.x >= worldWidth) | (pos.y >= worldHeight) | (pos.z >= worldLength))
-    return;
-  world[pos.x + pos.y * worldWidth + pos.z * worldHeight * worldLength] = blockID;
-}
 
+void World_AddTile(int posx, int posy, int posz, Vec3 col, int tex, int xpixoffset /*= 0*/, int ypixoffset /*= 0*/)
+{
+  tex--;
+  int isoX = posx - posz;
+  int isoY = posy;
+  int isoZ = posx + posz - posy * 2;
+  isoY = 0;
+  int AtlasTileWidth = 16;
+  float iATW = 1.0f / AtlasTileWidth;
+  int tx = tex % AtlasTileWidth;
+  int ty = tex / AtlasTileWidth;
+  float u = tx * iATW;
+  float v = ty * iATW;
+
+  float x = xpixoffset / 16.0f;
+  float y = ypixoffset / 16.0f;
+
+  worldMesh->AddQuad(
+    Vert(
+      Vec3(isoX + x, (float)isoY, isoZ / 2.0f + y),
+      Vec3(col.r, col.g, col.b),
+      Vec2(u, v)),
+    Vert(
+      Vec3(isoX + 2 + x, (float)isoY, isoZ / 2.0f + y),
+      Vec3(col.r, col.g, col.b),
+      Vec2(u + iATW, v)),
+    Vert(
+      Vec3(isoX + 2 + x, (float)isoY, isoZ / 2.0f + 2.0f + y),
+      Vec3(col.r, col.g, col.b),
+      Vec2(u + iATW, v + iATW)),
+    Vert(
+      Vec3(isoX + x, (float)isoY, isoZ / 2.0f + 2.0f + y),
+      Vec3(col.r, col.g, col.b),
+      Vec2(u, v + iATW))
+    );
+}
 
 void World_BuildMesh()
 {
+  if (!worldMesh)
+  {
+    worldMesh = new RenderObject(0);
+    worldMesh->AssignTexture("Assets\\Textures\\Texture.bmp");
+  }
+
   int verts = 0;
   //Make a graphical representation
   for (int y = 0; y < worldHeight; y++)
@@ -272,8 +314,7 @@ void World_BuildMesh()
     }
   }
 
-  Renderer_DestroyBuffers();
-  Renderer_CreateBuffers(verts);
+  worldMesh->ReAllocate(verts);
 
   //Make a graphical representation
   for (int y = 0; y < worldHeight; y++)
@@ -298,7 +339,7 @@ void World_BuildMesh()
               World_IsBlockExposed(world, worldWidth, worldHeight, worldLength, x, y, z + 1))
             )
           {
-            Renderer_AddTile(x, y, z, { b, b, b }, 32 + block);
+            World_AddTile(x, y, z, { b, b, b }, 32 + block);
             drawn = true;
           }
 
@@ -307,15 +348,15 @@ void World_BuildMesh()
             World_IsBlockExposed(world, worldWidth, worldHeight, worldLength, x, y, z)
             )
           {
-            Renderer_AddTile(x, y, z, { b, b, b }, 16 + block);
+            World_AddTile(x, y, z, { b, b, b }, 16 + block);
             drawn = true;
           }
           if (drawn)
           {
             if (World_GetBlock(Vec3i(x - 1, y, z)) == 0)
-              Renderer_AddTile(x, y, z, { b, b, b }, 5, 0, -1);   
+              World_AddTile(x, y, z, { b, b, b }, 5, 0, -1);
             if (World_GetBlock(Vec3i(x, y, z - 1)) == 0)
-              Renderer_AddTile(x, y, z, { b, b, b }, 6, 0, -1);
+              World_AddTile(x, y, z, { b, b, b }, 6, 0, -1);
           }
 
         }
@@ -323,6 +364,10 @@ void World_BuildMesh()
     }
   }
 
-  Renderer_GenBuffers();
-  Renderer_BindShiz();
+  worldMesh->UploadToGPU();
+}
+
+void World_Draw()
+{
+  worldMesh->Render();
 }

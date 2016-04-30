@@ -30,8 +30,6 @@
 //Program name
 const char* PROGRAM_NAME = "Gnomoria";
 
-#define testWindow
-
 //The window we'll be rendering to
 SDL_Window* gWindow = NULL;
 
@@ -44,37 +42,39 @@ GLuint gProgramID = 0;
 //Uniform Locations
 GLuint gLocCAM = -1;
 GLint gLocVertexPos4D = -1;
-GLuint gLocTexture = -1;
-
-
-GLuint vertPosDataGLPtr = 0;
-GLuint colPosDataGLPtr = 0;
-GLuint UVPosDataGLPtr = 0;
-GLfloat* vertPosData = nullptr;
-GLfloat* colPosData = nullptr;
-GLfloat* UVPosData = nullptr;
-GLuint VertexCount = 0;
-GLuint TextureID;
+GLuint gLocTextureSampler = -1;
 
 bool _TexelExists(uint8_t *img, int w, int h, int x, int y);
 
-RenderObject::RenderObject(int maxRenderSize)
+Vert::Vert(Vec3 Position, Vec3 Color, Vec2 UVs)
 {
+  position = Position;
+  color = Color;
+  uvs = UVs;
+};
+
+RenderObject::RenderObject(int maxRenderSize = 0)
+{
+  glGenBuffers(1, &posDataGLPtr);
+  glGenBuffers(1, &colDataGLPtr);
+  glGenBuffers(1, &uvsDataGLPtr);
   ReAllocate(maxRenderSize);
 }
 
 void RenderObject::ReAllocate(int maxRenderSize)
 {
-  delete[]PosData;
-  delete[]colData;
-  delete[]uvsData;
-  float* PosData = new float[maxRenderSize * 3];
-  float* colData = new float[maxRenderSize * 3];
-  float* uvsData = new float[maxRenderSize * 2];
-  vertexCount = 0;
-  maxVertexCount = maxRenderSize;
+  if (maxRenderSize > 0)
+  {
+    delete[]PosData;
+    delete[]colData;
+    delete[]uvsData;
+    PosData = new float[maxRenderSize * 3];
+    colData = new float[maxRenderSize * 3];
+    uvsData = new float[maxRenderSize * 2];
+    vertexCount = 0;
+    maxVertexCount = maxRenderSize;
+  }
 }
-
 
 void RenderObject::AddTriangle(Vert v1, Vert v2, Vert v3)
 {
@@ -95,7 +95,7 @@ void RenderObject::AddTriangle(Vert v1, Vert v2, Vert v3)
   PosData[vertexCount * 3 + 2] = p1.z;
   colData[vertexCount * 3 + 0] = c1.x;
   colData[vertexCount * 3 + 1] = c1.y;
-  uvsData[vertexCount * 3 + 2] = c1.z;
+  colData[vertexCount * 3 + 2] = c1.z;
   uvsData[vertexCount * 2 + 0] = uv1.x;
   uvsData[vertexCount * 2 + 1] = uv1.y;
   vertexCount++;
@@ -127,7 +127,7 @@ void RenderObject::AddQuad(Vert v1, Vert v2, Vert v3, Vert v4)
   AddTriangle(v2, v3, v4);
 }
 
-void RenderObject::SetTexture(char *bmpFile)
+void RenderObject::AssignTexture(char *bmpFile)
 {
   SDL_Surface *tex;
   GLuint texID = -1;
@@ -153,7 +153,7 @@ void RenderObject::SetTexture(char *bmpFile)
           //Transparent
           a = 0;
           //Find neighbor and use color
-          int fixRadius = 8;
+          int fixRadius = 2;
           //for (int ny = -1; ny <= 1; ny++)
           for (int ny = -fixRadius; ny <= fixRadius; ny++)
           {
@@ -199,15 +199,62 @@ void RenderObject::SetTexture(char *bmpFile)
 
 void RenderObject::UploadToGPU()
 {
+  glBindBuffer(GL_ARRAY_BUFFER, posDataGLPtr);
+  glBufferData(GL_ARRAY_BUFFER, vertexCount * 3 * sizeof(GLfloat), PosData, GL_STATIC_DRAW);
 
+  glBindBuffer(GL_ARRAY_BUFFER, colDataGLPtr);
+  glBufferData(GL_ARRAY_BUFFER, vertexCount * 3 * sizeof(GLfloat), colData, GL_STATIC_DRAW);
 
+  glBindBuffer(GL_ARRAY_BUFFER, uvsDataGLPtr);
+  glBufferData(GL_ARRAY_BUFFER, vertexCount * 2 * sizeof(GLfloat), uvsData, GL_STATIC_DRAW);
 }
 
 void RenderObject::Render()
 {
+  // bind shader
+  glUseProgram(gProgramID);
 
+  //enable Shader Attribute channels
+  glEnableVertexAttribArray(0);
+  glEnableVertexAttribArray(1);
+  glEnableVertexAttribArray(2);
 
+  //upload camera uniform
+  cam &cam = *cam::GetInstance();
+  glm::vec4 ShaderCam(cam.x, cam.y, cam.z, (SCREEN_HEIGHT + 0.0f) / SCREEN_WIDTH);
+  glUniform4fv(gLocCAM, 1, (GLfloat*)&ShaderCam);
+
+  //configure vertex attributes
+  //attrib number, count, type, normalised?, stride, array buffer-object
+
+  //vertex positions
+  glBindBuffer(GL_ARRAY_BUFFER, posDataGLPtr);
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+
+  //vertex UVs
+  glBindBuffer(GL_ARRAY_BUFFER, uvsDataGLPtr);
+  glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
+
+  //vertex colors
+  glBindBuffer(GL_ARRAY_BUFFER, colDataGLPtr);
+  glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+
+  //bing texture
+  glBindTexture(GL_TEXTURE_2D, texture);
+
+  //draw data
+  glDrawArrays(GL_TRIANGLES, 0, vertexCount);
+
+  //Unbind Vert Shader Attributes
+  glDisableVertexAttribArray(0);
+  glDisableVertexAttribArray(1);
+  glDisableVertexAttribArray(2);
+
+  //Unbind shader
+  glUseProgram(NULL);
 }
+
+
 
 
 void _printProgramLog(GLuint program)
@@ -366,7 +413,7 @@ bool _initGL()
   //Model View Projection Shader parameter
   gLocCAM = glGetUniformLocation(gProgramID, "CAM");
 
-  gLocTexture = glGetUniformLocation(gProgramID, "TextureSampler");
+  gLocTextureSampler = glGetUniformLocation(gProgramID, "TextureSampler");
 
   //Initialize clear color
   glClearColor(0.f, 0.0, 0.0, 1.f);
@@ -451,178 +498,16 @@ void Renderer_Destroy()
   SDL_Quit();
 }
 
-void Renderer_Render()
+void Renderer_Clear()
 {
-  //Clear color buffer
+  //Clear color and depth buffers
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-  // Bind shader program
-  glUseProgram(gProgramID);
-
-  //Bind Vert Shader Attributes
-  glEnableVertexAttribArray(0);
-  glEnableVertexAttribArray(1);
-  glEnableVertexAttribArray(2);
-
-  cam *c = cam::GetInstance();
-  glm::vec4 ShaderCam(c->x, c->y, c->z, (SCREEN_HEIGHT+0.0f) / SCREEN_WIDTH);
-  glUniform4fv(gLocCAM, 1, (GLfloat*)&ShaderCam);
-
-  //vertex positions
-  glBindBuffer(GL_ARRAY_BUFFER, vertPosDataGLPtr);
-  glVertexAttribPointer
-  (
-    0,                  // attribute number. must match the layout in the shader.
-    3,                  // count
-    GL_FLOAT,           // type
-    GL_FALSE,           // normalized?
-    0,                  // stride
-    (void*)0            // array buffer offset
-  );
-
-
-  //texture coordinates
-  glBindBuffer(GL_ARRAY_BUFFER, UVPosDataGLPtr);
-  glVertexAttribPointer(
-    1,                  // attribute number. must match the layout in the shader.
-    2,                  // count
-    GL_FLOAT,           // type
-    GL_FALSE,           // normalized?
-    0,                  // stride
-    (void*)0            // array buffer offset
-  );
-
-  //texture coordinates
-  glBindBuffer(GL_ARRAY_BUFFER, colPosDataGLPtr);
-  glVertexAttribPointer(
-    2,                  // attribute number. must match the layout in the shader.
-    3,                  // count
-    GL_FLOAT,           // type
-    GL_FALSE,           // normalized?
-    0,                  // stride
-    (void*)0            // array buffer offset
-  );
-
-  glBindTexture(GL_TEXTURE_2D, TextureID);
-
-  glDrawArrays(GL_TRIANGLES, 0, VertexCount);
-
-  //Unbind Vert Shader Attributes
-  glDisableVertexAttribArray(0);
-  glDisableVertexAttribArray(1);
-  glDisableVertexAttribArray(2);
-
-  //Unbind program
-  glUseProgram(NULL);
-
 }
 
 void Renderer_Swap()
 {
   SDL_GL_SwapWindow(gWindow);
 }
-
-void Renderer_AddQuad(Vec3 p1, Vec3 p2, Vec3 p3, Vec3 p4, Vec3 c1, Vec3 c2, Vec3 c3, Vec3 c4, Vec2 uv1, Vec2 uv2, Vec2 uv3, Vec2 uv4)
-{
-  // Poly 1
-  vertPosData[VertexCount * 3 + 0] = p1.x;
-  vertPosData[VertexCount * 3 + 1] = p1.y;
-  vertPosData[VertexCount * 3 + 2] = p1.z;
-  colPosData[VertexCount * 3 + 0] = c1.x;
-  colPosData[VertexCount * 3 + 1] = c1.y;
-  colPosData[VertexCount * 3 + 2] = c1.z;
-  UVPosData[VertexCount * 2 + 0] = uv1.x;
-  UVPosData[VertexCount * 2 + 1] = uv1.y;
-  VertexCount++;
-
-  vertPosData[VertexCount * 3 + 0] = p2.x;
-  vertPosData[VertexCount * 3 + 1] = p2.y;
-  vertPosData[VertexCount * 3 + 2] = p2.z;
-  colPosData[VertexCount * 3 + 0] = c2.x;
-  colPosData[VertexCount * 3 + 1] = c2.y;
-  colPosData[VertexCount * 3 + 2] = c2.z;
-  UVPosData[VertexCount * 2 + 0] = uv2.x;
-  UVPosData[VertexCount * 2 + 1] = uv2.y;
-  VertexCount++;
-
-  vertPosData[VertexCount * 3 + 0] = p4.x;
-  vertPosData[VertexCount * 3 + 1] = p4.y;
-  vertPosData[VertexCount * 3 + 2] = p4.z;
-  colPosData[VertexCount * 3 + 0] = c4.x;
-  colPosData[VertexCount * 3 + 1] = c4.y;
-  colPosData[VertexCount * 3 + 2] = c4.z;
-  UVPosData[VertexCount * 2 + 0] = uv4.x;
-  UVPosData[VertexCount * 2 + 1] = uv4.y;
-  VertexCount++;
-
-  // Poly 2
-  vertPosData[VertexCount * 3 + 0] = p2.x;
-  vertPosData[VertexCount * 3 + 1] = p2.y;
-  vertPosData[VertexCount * 3 + 2] = p2.z;
-  colPosData[VertexCount * 3 + 0] = c2.x;
-  colPosData[VertexCount * 3 + 1] = c2.y;
-  colPosData[VertexCount * 3 + 2] = c2.z;
-  UVPosData[VertexCount * 2 + 0] = uv2.x;
-  UVPosData[VertexCount * 2 + 1] = uv2.y;
-  VertexCount++;
-
-  vertPosData[VertexCount * 3 + 0] = p3.x;
-  vertPosData[VertexCount * 3 + 1] = p3.y;
-  vertPosData[VertexCount * 3 + 2] = p3.z;
-  colPosData[VertexCount * 3 + 0] = c3.x;
-  colPosData[VertexCount * 3 + 1] = c3.y;
-  colPosData[VertexCount * 3 + 2] = c3.z;
-  UVPosData[VertexCount * 2 + 0] = uv3.x;
-  UVPosData[VertexCount * 2 + 1] = uv3.y;
-  VertexCount++;
-
-  vertPosData[VertexCount * 3 + 0] = p4.x;
-  vertPosData[VertexCount * 3 + 1] = p4.y;
-  vertPosData[VertexCount * 3 + 2] = p4.z;
-  colPosData[VertexCount * 3 + 0] = c4.x;
-  colPosData[VertexCount * 3 + 1] = c4.y;
-  colPosData[VertexCount * 3 + 2] = c4.z;
-  UVPosData[VertexCount * 2 + 0] = uv4.x;
-  UVPosData[VertexCount * 2 + 1] = uv4.y;
-  VertexCount++;
-}
-
-void Renderer_AddTile(int posx, int posy, int posz, Vec3 col, int tex, int xpixoffset /*= 0*/, int ypixoffset /*= 0*/)
-{
-  tex--;
-  int isoX = posx - posz;
-  int isoY = posy;
-  int isoZ = posx + posz - posy * 2;
-  isoY = 0;
-  int AtlasTileWidth = 16;
-  float iATW = 1.0f / AtlasTileWidth;
-  int tx = tex % AtlasTileWidth;
-  int ty = tex / AtlasTileWidth;
-  float u = tx * iATW;
-  float v = ty * iATW;
-
-  float x = xpixoffset / 16.0f;
-  float y = ypixoffset / 16.0f;
-
-  Renderer_AddQuad(
-    // Position
-    Vec3(isoX + x, (float)isoY, isoZ / 2.0f + y),
-    Vec3(isoX + 2 + x, (float)isoY, isoZ / 2.0f + y),
-    Vec3(isoX + 2 + x, (float)isoY, isoZ / 2.0f + 2.0f + y),
-    Vec3(isoX + x, (float)isoY, isoZ / 2.0f + 2.0f + y),
-    // Color
-    Vec3(col.r, col.g, col.b),
-    Vec3(col.r, col.g, col.b),
-    Vec3(col.r, col.g, col.b),
-    Vec3(col.r, col.g, col.b),
-    // UV
-    Vec2(u, v),
-    Vec2(u + iATW, v),
-    Vec2(u + iATW, v + iATW),
-    Vec2(u, v + iATW)
-  );
-}
-
 
 bool _TexelExists(uint8_t *img, int w, int h, int x, int y)
 {
@@ -635,112 +520,4 @@ bool _TexelExists(uint8_t *img, int w, int h, int x, int y)
   if (r == 255 && g == 0 && b == 255)
     return false;
   return true;
-}
-
-GLuint Renderer_LoadTexture(char * path)
-{
-  SDL_Surface *tex;
-  GLuint texID = -1;
-  if (tex = SDL_LoadBMP(path))
-  {
-    glGenTextures(1, &texID);
-    //Turn pink pixels transparent and upload texture to GL
-    int w = tex->w;
-    int h = tex->h;
-    uint8_t *img = new uint8_t[w * h * 4];
-    uint8_t* pixels = (uint8_t*)tex->pixels;
-    for (int y = 0; y < h; y++)
-    {
-      for (int x = 0; x < w; x++)
-      {
-        uint8_t r = pixels[(x + y * w) * 3 + 2];
-        uint8_t g = pixels[(x + y * w) * 3 + 1];
-        uint8_t b = pixels[(x + y * w) * 3 + 0];
-        uint8_t a = 255;
-
-        if (r == 255 && g == 0 && b == 255)
-        {
-          //Transparent
-          a = 0;
-          //Find neighbor and use color
-          int fixRadius = 8;
-          //for (int ny = -1; ny <= 1; ny++)
-          for (int ny = -fixRadius; ny <= fixRadius; ny++)
-          {
-            //for (int nx = -1; nx <= 1; nx++)
-            for (int nx = -fixRadius; nx <= fixRadius; nx++)
-            {
-              if (_TexelExists(pixels, w, h, x + nx, y + ny))
-              {
-                r = pixels[(x + nx + (y + ny) * w) * 3 + 2];
-                g = pixels[(x + nx + (y + ny) * w) * 3 + 1];
-                b = pixels[(x + nx + (y + ny) * w) * 3 + 0];
-                break;
-              }
-            }
-          }
-
-        }
-
-        img[(x + y * w) * 4 + 0] = r;
-        img[(x + y * w) * 4 + 1] = g;
-        img[(x + y * w) * 4 + 2] = b;
-        img[(x + y * w) * 4 + 3] = a;
-
-      }
-    }
-
-    glGenTextures(1, &texID);
-    glBindTexture(GL_TEXTURE_2D, texID);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, tex->w, tex->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, img);
-    glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-
-    glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glGenerateMipmap(GL_TEXTURE_2D);
-
-    SDL_FreeSurface(tex);
-    delete[] img;
-  }
-  return texID;
-}
-
-void Renderer_SetTextureID(GLuint texID)
-{
-  TextureID = texID;
-}
-
-void Renderer_GenBuffers()
-{
-  glGenBuffers(1, &vertPosDataGLPtr);
-  glGenBuffers(1, &UVPosDataGLPtr);
-  glGenBuffers(1, &colPosDataGLPtr);
-}
-
-void Renderer_CreateBuffers(int verts)
-{
-  vertPosData = new GLfloat[verts * 3];
-  UVPosData = new GLfloat[verts * 2];
-  colPosData = new GLfloat[verts * 3];
-}
-
-void Renderer_DestroyBuffers()
-{
-  delete[] vertPosData;
-  delete[] UVPosData;
-  delete[] colPosData;
-}
-
-void Renderer_BindShiz()
-{
-  glBindBuffer(GL_ARRAY_BUFFER, vertPosDataGLPtr);
-  glBufferData(GL_ARRAY_BUFFER, VertexCount * 3 * sizeof(GLfloat), vertPosData, GL_STATIC_DRAW);
-
-  glBindBuffer(GL_ARRAY_BUFFER, UVPosDataGLPtr);
-  glBufferData(GL_ARRAY_BUFFER, VertexCount * 2 * sizeof(GLfloat), UVPosData, GL_STATIC_DRAW);
-
-  glBindBuffer(GL_ARRAY_BUFFER, colPosDataGLPtr);
-  glBufferData(GL_ARRAY_BUFFER, VertexCount * 3 * sizeof(GLfloat), colPosData, GL_STATIC_DRAW);
 }
