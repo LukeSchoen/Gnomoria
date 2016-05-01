@@ -98,8 +98,9 @@ struct Vector2
 
 	//Vector2<T> operator=(Vector2<T> const &rhs) { x = rhs.x; y = rhs.y; return *this; }
 	template<typename T2> Vector2<T> operator=(Vector2<T2> const &rhs) { x = rhs.x; y = rhs.y; return *this; }
+	bool operator==(Vector2<T> const &rhs) const { return x == rhs.x && y == rhs.y; }
+  bool operator!=(Vector2<T> const &rhs) const { return !(rhs == *this); }
 
-	//bool operator==(Vector2<T> const &rhs) const { return x == rhs.x && y == rhs.y; }
 	//template<typename T2> bool operator==(Vector2<T2> const &rhs) const { return x == rhs.x && y == rhs.y; }
 
 	template <typename T2> operator T2() const { return T2(x, y); }

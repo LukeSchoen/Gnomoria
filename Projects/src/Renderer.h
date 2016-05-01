@@ -35,8 +35,7 @@ struct Vert
 
 struct RenderObject
 {
-  RenderObject();
-  RenderObject(int maxRenderSize /*In number of verticies*/);
+  RenderObject(int maxRenderSize = 0);
   void ReAllocate(int newMaxRenderSize /*In number of verticies*/);
   void AddTriangle(Vert v1, Vert v2, Vert v3);
   void AddQuad(Vert v1, Vert v2, Vert v3, Vert v4);

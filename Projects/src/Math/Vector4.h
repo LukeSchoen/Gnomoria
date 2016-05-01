@@ -99,6 +99,7 @@ struct Vector4
 
 	Vector4<T> operator=(Vector4<T> const &rhs) { x = rhs.x; y = rhs.y; z = rhs.z; w = rhs.w; return *this; }
 	bool operator==(Vector4<T> const &rhs) const { return x == rhs.x && y == rhs.y && z == rhs.z && w == rhz.w; }
+  bool operator!=(Vector4<T> const &rhs) const { return !(rhs == *this); }
 
 	//template<typename T2> Vector4<T> operator=(Vector4<T2> const &rhs) { x = rhs.x; y = rhs.y; z = rhs.z; w = rhs.w; return *this; }
 	//template<typename T2> bool operator==(Vector4<T2> const &rhs) const { return x == rhs.x && y == rhs.y && z == rhs.z && w == rhz.w; }

@@ -7,7 +7,7 @@
 #include <stdio.h>
 #include "InputHandler.h"
 #include "FrameRate.h"
-
+#include "Debug.h"
 
 //Main Loop
 int wmain(int argc, char *argv[])
@@ -36,6 +36,7 @@ int wmain(int argc, char *argv[])
     //Render
     Renderer_Clear();
     World_Draw();
+    Debug_Draw();
 
     Text_Draw("Gnomoria!", Vec2(-60.0f, -85.0f), 120, true);
 

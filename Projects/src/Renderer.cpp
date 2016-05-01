@@ -53,12 +53,13 @@ Vert::Vert(Vec3 Position, Vec3 Color, Vec2 UVs)
   uvs = UVs;
 };
 
-RenderObject::RenderObject(int maxRenderSize = 0)
+RenderObject::RenderObject(int maxRenderSize)
 {
   glGenBuffers(1, &posDataGLPtr);
   glGenBuffers(1, &colDataGLPtr);
   glGenBuffers(1, &uvsDataGLPtr);
   ReAllocate(maxRenderSize);
+  vertexCount = 0;
 }
 
 void RenderObject::ReAllocate(int maxRenderSize)
@@ -68,7 +69,6 @@ void RenderObject::ReAllocate(int maxRenderSize)
     PosData = (float*)realloc(PosData, sizeof(float) * maxRenderSize * 3);
     colData = (float*)realloc(colData, sizeof(float) * maxRenderSize * 3);
     uvsData = (float*)realloc(uvsData, sizeof(float) * maxRenderSize * 2);
-    vertexCount = 0;
     maxVertexCount = maxRenderSize;
   }
 }

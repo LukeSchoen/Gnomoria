@@ -147,7 +147,8 @@ struct Vector3
 	//template<typename T2> Vector3<T> operator/=(T2 const &rhs) { *this = *this / rhs; return *this; }
 
 	Vector3<T> operator=(Vector3<T> const &rhs) { x = rhs.x; y = rhs.y; z = rhs.z; return *this; }
-	bool operator==(Vector3<T> const &rhs) const { return x == rhs.x && y == rhs.y && z == rhs.z; }
+  bool operator==(Vector3<T> const &rhs) const { return x == rhs.x && y == rhs.y && z == rhs.z; }
+  bool operator!=(Vector3<T> const &rhs) const { return !(rhs == *this); }
 
 	//template<typename T2> Vector3<T> operator=(Vector3<T2> const &rhs) { x = rhs.x; y = rhs.y; z = rhs.z; return *this; }
 	//template<typename T2> bool operator==(Vector3<T2> const &rhs) const { return x == rhs.x && y == rhs.y && z == rhs.z; }

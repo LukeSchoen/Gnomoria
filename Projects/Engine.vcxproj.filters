@@ -43,6 +43,9 @@
     <Filter Include="Source\Engine\PathFinder">
       <UniqueIdentifier>{baec5f29-6fa5-43e4-828d-c04d53d139ff}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Game\Debugger">
+      <UniqueIdentifier>{7fd8f277-9a92-49c1-9f8a-a9cc229ecd41}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Renderer.h">
@@ -96,6 +99,12 @@
     <ClInclude Include="src\FrameRate.h">
       <Filter>Source\Engine\Performance</Filter>
     </ClInclude>
+    <ClInclude Include="src\PathFinder.h">
+      <Filter>Source\Engine\PathFinder</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Debug.h">
+      <Filter>Source\Game\Debugger</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Renderer.cpp">
@@ -124,6 +133,9 @@
     </ClCompile>
     <ClCompile Include="src\InputHandler.cpp">
       <Filter>Source\Game\InputHandler</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Debug.cpp">
+      <Filter>Source\Game\Debugger</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
