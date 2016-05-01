@@ -7,7 +7,7 @@
 
 //Dot Product
 
-template <typename T1, typename T2, size_t D>
+template <size_t D, typename T1, typename T2>
 inline auto Dot(T1 const &a, T2 const& b)
 {
 	auto total = a[0] * b[0];

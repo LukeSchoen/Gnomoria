@@ -3,7 +3,7 @@
 #include "Renderer.h"
 
 static bool Updated = false;
-static int RenderSize = 600;
+static int RenderSize = 0;
 static int MaxRenderSize = 600;
 static RenderObject *debugMesh = nullptr;
 
@@ -11,7 +11,7 @@ void _Initialize()
 {
   if (!debugMesh)
   {
-    debugMesh = new RenderObject;
+    debugMesh = new RenderObject(MaxRenderSize);
     debugMesh->AssignTexture("Assets\\Textures\\Texture.bmp");
   }
 }
@@ -21,9 +21,10 @@ void _PrepareForGeometry()
   _Initialize();
   while ((RenderSize + 6) >= MaxRenderSize)
   {
-    MaxRenderSize = MaxRenderSize * 2;
+    MaxRenderSize = MaxRenderSize * 2 + 1;
     debugMesh->ReAllocate(MaxRenderSize);
   }
+  RenderSize += 6;
   Updated = false;
 }
 

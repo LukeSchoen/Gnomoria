@@ -80,7 +80,7 @@ struct Vector3
 	void ZYX(Vector3<T> const &_xyz) { z = _xyz.x; y = _xyz.y; z = _xyz.z; }
 
 	float Length() const { return sqrt(LengthSquared()); }
-	float LengthSquared() const { return Dot3(*this); }
+	float LengthSquared() const { return Dot3(*this, *this); }
 	Vector3<float> Normalise() const { return Vector3<float>(*this) / Length(); }
 
 	T const &operator[](size_t index) const { return components[index]; }

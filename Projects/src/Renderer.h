@@ -19,8 +19,8 @@ const int SCREEN_WIDTH = 512;
 const int SCREEN_HEIGHT = 512;
 const bool FULL_SCREEN = false;
 #else
-const int SCREEN_WIDTH = 1024;
-const int SCREEN_HEIGHT = 768;
+const int SCREEN_WIDTH = 1920;
+const int SCREEN_HEIGHT = 1200;
 const bool FULL_SCREEN = true;
 #endif
 #endif 

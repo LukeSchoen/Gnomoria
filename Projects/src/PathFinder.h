@@ -49,19 +49,22 @@ std::unordered_map<int64_t, node> openSet;
 
 std::unordered_map<int64_t, node> closedSet;
 
-int manDist(Vec3i a, Vec3i b)
+float manDist(Vec3i a, Vec3i b)
 {
-  a -= b;
+  a = b - a;
+  //return a.Length();
   return abs(a.x) + abs(a.y) + abs(a.z);
 }
 
-int64_t bestScore()
+int64_t bestScore(Vec3i end)
 {
-  int bestScore = 999999;
+  float bestScore = FLT_MAX;
   int64_t bestKey;
   for (auto kvp : openSet)
   {
-    int score = kvp.second.EndScore + kvp.second.StartScore;
+    float score = kvp.second.EndScore + kvp.second.StartScore;
+    Vec3i posOffset = unhash(kvp.first);
+    score += (end - posOffset).Length() * 0.0001;
     if (score < bestScore)
     {
       bestScore = score;
@@ -71,13 +74,27 @@ int64_t bestScore()
   return bestKey;
 }
 
+void DebugDisplayPath()
+{
+  for (auto kvp : openSet)
+  {
+    Debug_AddFloorLine(unhash(kvp.first) - Vec3i(0, 1, 0), Vec3(0.6, 0.2, 1.0));
+  }
+
+  for (auto kvp : closedSet)
+  {
+    Debug_AddFloorFill(unhash(kvp.first) - Vec3i(0, 1, 0), Vec3(0.6, 0.2, 1.0));
+  }
+
+}
+
 void AddNeighbour(Vec3i newPos, Vec3i oldPos, Vec3i endPos, node parent)
 {
   bool validTile = (World_GetBlock(newPos - Vec3i(0, 1, 0)) > 0) && (World_GetBlock(newPos) == 0);
   if (!validTile) return;
   if (closedSet.count(hash(newPos)) > 0) return;
 
-  int startScore = parent.StartScore + 1;
+  float startScore = parent.StartScore + 1;
   if (openSet.count(hash(newPos)) > 0)
   {
     if (openSet[hash(newPos)].StartScore > startScore)
@@ -104,12 +121,13 @@ Path findPath(Vec3i start, Vec3i end)
   while (openSet.size() > 0)
   {
     //find lowest gscore
-    int64_t currentKey = bestScore();
+    int64_t currentKey = bestScore(end);
     node currentNode = openSet[currentKey];
 
     //return finished path
     if (currentKey == hash(end))
     {
+      DebugDisplayPath();
       std::vector<Vec3i> path;
       while (currentKey != hash(start))
       {
@@ -140,7 +158,7 @@ Path findPath(Vec3i start, Vec3i end)
     AddNeighbour(unhash(currentKey) + Vec3i(0, -1, 0), unhash(currentKey), end, currentNode);
     AddNeighbour(unhash(currentKey) + Vec3i(0, 0, 1), unhash(currentKey), end, currentNode);
     AddNeighbour(unhash(currentKey) + Vec3i(0, 0, -1), unhash(currentKey), end, currentNode);
-    Debug_AddFloorFill(unhash(currentKey) - Vec3i(0, 1, 0), Vec3(0.0, 1.0, 0.0));
+
 
   }
   //Failure
