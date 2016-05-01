@@ -1,5 +1,6 @@
 #include "Camera.h"
 #include "Renderer.h"
+#include "Text.h"
 #include "Transform.h"
 #include "SDL_keycode.h"
 
@@ -38,22 +39,43 @@ void cam::UpdateKeyboardControls(const unsigned char *keyboard)
   if (keyboard[SDL_SCANCODE_E]) y += MoveSpeed;
 }
 
-void cam::UpdateMouseControls(int mousex, int mousey, bool leftClick, bool rightClick, int scroll)
+void cam::UpdateMouseControls(Vec2i MousePos, bool leftClick, bool rightClick, int scroll)
 {
   static bool lastLMouseDown = false;
   static bool lastRMouseDown = false;
 
+  static RenderObject *selection = nullptr;
+  if (!selection)
+  {
+    selection = new RenderObject(6);
+    selection->AssignTexture("Assets\\Textures\\Texture.bmp");
+  }
+  selection->Clear();
+  Vec3i pos = Transform_ScreenToWorld(MousePos);
+
+
+  char posStr[256];
+  sprintf(posStr, "%d %d %d", pos.x, pos.y, pos.z);
+
+  Text_Draw(posStr, Vec2(-1, -1), 1);
+
+  World_AddTile(selection, pos.x, pos.y, pos.z, Vec3(1.0, 1.0, 1.0), 4);
+  selection->UploadToGPU();
+  selection->Render();
+
+
   if (leftClick && (!lastLMouseDown))
   {
-    Vec3i pos = Transform_ScreenToWorld(Vec2i(mousex, mousey));
+    Vec3i pos = Transform_ScreenToWorld(MousePos);
     World_SetBlock(pos, 0);
     World_BuildMesh();
   }
 
   if (rightClick && (!lastRMouseDown))
   {
-    Vec3i pos = Transform_ScreenToWorld(Vec2i(mousex, mousey));
-    World_SetBlock(pos + Vec3i(0,1,0), 1);    World_BuildMesh();
+    Vec3i pos = Transform_ScreenToWorld(MousePos);
+    World_SetBlock(pos + Vec3i(0,1,0), 1);
+    World_BuildMesh();
   }
 
   lastLMouseDown = leftClick;

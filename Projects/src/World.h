@@ -3,14 +3,15 @@
 
 #include <stdio.h>
 #include <stdint.h>
-
 #include "Math/Vector.h"
+
+struct RenderObject;
 
 void World_LoadWorld();
 void World_BuildMesh();
 void World_Draw();
 
-void World_AddTile(int posx, int posy, int posz, Vec3 col, int tex, int xpixoffset = 0, int ypixoffset = 0);
+void World_AddTile(RenderObject *renderer, int posx, int posy, int posz, Vec3 col, int tex, int xpixoffset = 0, int ypixoffset = 0);
 
 uint8_t *World_LoadFromSchematic(char *MapPath, int &width, int &height, int &depth);
 

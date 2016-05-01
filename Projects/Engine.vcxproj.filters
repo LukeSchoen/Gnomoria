@@ -34,6 +34,15 @@
     <Filter Include="Source\Math">
       <UniqueIdentifier>{1b16f265-6d42-4e10-9c96-ae4db604d76c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Game\InputHandler">
+      <UniqueIdentifier>{4086db20-3ba2-448e-acb1-b758e4ad1e34}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Engine\Performance">
+      <UniqueIdentifier>{f0ad8b3e-a92f-4989-91fa-f83ac857c246}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Engine\PathFinder">
+      <UniqueIdentifier>{baec5f29-6fa5-43e4-828d-c04d53d139ff}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Renderer.h">
@@ -81,6 +90,12 @@
     <ClInclude Include="src\Math\Vector4.h">
       <Filter>Source\Math</Filter>
     </ClInclude>
+    <ClInclude Include="src\InputHandler.h">
+      <Filter>Source\Game\InputHandler</Filter>
+    </ClInclude>
+    <ClInclude Include="src\FrameRate.h">
+      <Filter>Source\Engine\Performance</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Renderer.cpp">
@@ -107,5 +122,22 @@
     <ClCompile Include="src\Math\Matrix4.cpp">
       <Filter>Source\Math</Filter>
     </ClCompile>
+    <ClCompile Include="src\InputHandler.cpp">
+      <Filter>Source\Game\InputHandler</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\Assets\Textures\Texture.bmp">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="..\Assets\Textures\Font.bmp">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="..\Assets\Shaders\Frag\Texture.frag">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="..\Assets\Shaders\Vert\Texture.vert">
+      <Filter>Assets</Filter>
+    </Image>
   </ItemGroup>
 </Project>

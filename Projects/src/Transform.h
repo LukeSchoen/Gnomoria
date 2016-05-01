@@ -38,4 +38,17 @@ Vec3i Transform_ScreenToWorld(Vec2i ScreenPos)
   return World_Solve((int)round(OrthoSpace.x), (int)round(OrthoSpace.y));
 }
 
+Vec2 Transform_Test1(Vec2i ScreenPos)
+{
+  Vec2 DeviceSpace = Transform_ScreenToDevice(ScreenPos);
+  Vec2 IsoSpace = Transform_DeviceToIso(DeviceSpace);
+  return Transform_IsoToOrtho(IsoSpace);
+}
+
+Vec2 Transform_Test2(Vec2i ScreenPos)
+{
+  Vec2 DeviceSpace = Transform_ScreenToDevice(ScreenPos);
+  return Transform_DeviceToIso(DeviceSpace);
+}
+
 #endif // Transform_h__

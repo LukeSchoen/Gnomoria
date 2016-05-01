@@ -1,5 +1,6 @@
 #include "World.h"
 #include "Renderer.h"
+#include "PerlinNoise.h"
 
 uint8_t *world;
 int worldWidth = 1;
@@ -219,9 +220,21 @@ void World_LoadWorld()
 }
 
 
+int _GetGrassDecorations(RenderObject *renderer, int x, int y, int z, Vec3 col)
+{
+  int decoCount = 8;
+  uint8_t decotype = PerlinNoiseGenerator::RandomByte(x + y * 12345 + z * 654321) % 32;
+
+  if (decotype < decoCount)
+    return decotype + 48;
+
+  return 0;
+}
 
 
-void World_AddTile(int posx, int posy, int posz, Vec3 col, int tex, int xpixoffset /*= 0*/, int ypixoffset /*= 0*/)
+
+
+void World_AddTile(RenderObject *renderer, int posx, int posy, int posz, Vec3 col, int tex, int xpixoffset /*= 0*/, int ypixoffset /*= 0*/)
 {
   tex--;
   int isoX = posx - posz;
@@ -238,7 +251,7 @@ void World_AddTile(int posx, int posy, int posz, Vec3 col, int tex, int xpixoffs
   float x = xpixoffset / 16.0f;
   float y = ypixoffset / 16.0f;
 
-  worldMesh->AddQuad(
+  renderer->AddQuad(
     Vert(
       Vec3(isoX + x, (float)isoY, isoZ / 2.0f + y),
       Vec3(col.r, col.g, col.b),
@@ -282,8 +295,8 @@ void World_BuildMesh()
           if ( //basic wall solve
             (World_GetBlock(Vec3i(x + 1, y, z)) == 0 &&
               World_IsBlockExposed(world, worldWidth, worldHeight, worldLength, x + 1, y, z)) ||
-              (World_GetBlock(Vec3i(x, y, z+1)) == 0 &&
-                World_IsBlockExposed(world, worldWidth, worldHeight, worldLength, x, y, z + 1))
+            (World_GetBlock(Vec3i(x, y, z + 1)) == 0 &&
+              World_IsBlockExposed(world, worldWidth, worldHeight, worldLength, x, y, z + 1))
             )
             //Wall
           {
@@ -297,6 +310,12 @@ void World_BuildMesh()
             )
             //Floor
           {
+            if (block == 4)
+            {
+              int decoType = _GetGrassDecorations(worldMesh, x, y, z, { b,b,b });
+              if (decoType)
+                verts += 6;
+            }
             verts += 6;
             drawn = true;
           }
@@ -305,7 +324,7 @@ void World_BuildMesh()
           {
             if (World_GetBlock(Vec3i(x - 1, y, z)) == 0)
               verts += 6;
-            if (World_GetBlock(Vec3i(x, y, z-1)) == 0)
+            if (World_GetBlock(Vec3i(x, y, z - 1)) == 0)
               verts += 6;
           }
         }
@@ -339,7 +358,7 @@ void World_BuildMesh()
               World_IsBlockExposed(world, worldWidth, worldHeight, worldLength, x, y, z + 1))
             )
           {
-            World_AddTile(x, y, z, { b, b, b }, 32 + block);
+            World_AddTile(worldMesh, x, y, z, { b, b, b }, 32 + block);
             drawn = true;
           }
 
@@ -348,15 +367,24 @@ void World_BuildMesh()
             World_IsBlockExposed(world, worldWidth, worldHeight, worldLength, x, y, z)
             )
           {
-            World_AddTile(x, y, z, { b, b, b }, 16 + block);
+            float fl = b;
+            int decoType=0;
+            if (block == 4)
+            {
+              decoType = _GetGrassDecorations(worldMesh, x, y, z, { b,b,b });
+              fl *= 0.9f + (PerlinNoiseGenerator::RandomByte(x + y * 12345 + z * 654321) & 1)*0.1f;
+            }
+            World_AddTile(worldMesh, x, y, z, { fl, fl, fl }, 16 + block);
+            if (decoType)
+              World_AddTile(worldMesh, x, y, z, { b, b, b }, decoType);
             drawn = true;
           }
           if (drawn)
           {
             if (World_GetBlock(Vec3i(x - 1, y, z)) == 0)
-              World_AddTile(x, y, z, { b, b, b }, 5, 0, -1);
+              World_AddTile(worldMesh, x, y, z, { b, b, b }, 5, 0, -1);
             if (World_GetBlock(Vec3i(x, y, z - 1)) == 0)
-              World_AddTile(x, y, z, { b, b, b }, 6, 0, -1);
+              World_AddTile(worldMesh, x, y, z, { b, b, b }, 6, 0, -1);
           }
 
         }
