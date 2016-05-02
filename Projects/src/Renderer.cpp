@@ -527,6 +527,7 @@ void Renderer_Clear()
 void Renderer_Swap()
 {
   SDL_GL_SwapWindow(gWindow);
+  glFinish();
 }
 
 bool _TexelExists(uint8_t *img, int w, int h, int x, int y)

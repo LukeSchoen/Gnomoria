@@ -56,6 +56,11 @@ private:
   unsigned int texture = -1;
 };
 
+struct ManagedRenderObject : public RenderObject
+{
+
+};
+
 
 int Renderer_GetPolyDrawCount();
 bool Renderer_Initialise(); //open SDL and Window

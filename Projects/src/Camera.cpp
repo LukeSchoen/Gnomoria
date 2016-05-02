@@ -72,7 +72,7 @@ void cam::UpdateMouseControls(Vec2i MousePos, bool leftClick, bool rightClick, i
 
   if (pos != Vec3i(-1, -1, -1))
   {
-    World_AddTile(selection, pos.x, pos.y, pos.z, Vec3(1.0, 1.0, 1.0), 4);
+    World_AddTile(selection, pos.x, pos.y, pos.z, Vec3(1.0, 1.0, 1.0), 3);
     selection->UploadToGPU();
     selection->Render();
   }

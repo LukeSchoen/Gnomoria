@@ -19,9 +19,6 @@
     <Filter Include="Source\Engine\GUI">
       <UniqueIdentifier>{a145878b-30b3-4f99-80f5-202d8958f606}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Engine\Render">
-      <UniqueIdentifier>{f874ef3c-14f3-4a3f-97c3-f0c45c8d5330}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source\Game\Noise">
       <UniqueIdentifier>{e7f32550-13c8-4f42-80e1-3fceb473b08e}</UniqueIdentifier>
     </Filter>
@@ -46,10 +43,16 @@
     <Filter Include="Source\Game\Debugger">
       <UniqueIdentifier>{7fd8f277-9a92-49c1-9f8a-a9cc229ecd41}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Game\Cursor">
+      <UniqueIdentifier>{3f590841-5c16-4ba0-93c0-c5d8bd35ae01}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Engine\Renderer">
+      <UniqueIdentifier>{f874ef3c-14f3-4a3f-97c3-f0c45c8d5330}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Renderer.h">
-      <Filter>Source\Engine\Render</Filter>
+      <Filter>Source\Engine\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="src\Camera.h">
       <Filter>Source\Game\World</Filter>
@@ -61,13 +64,13 @@
       <Filter>Source\Engine\RealTime</Filter>
     </ClInclude>
     <ClInclude Include="src\Shaders.h">
-      <Filter>Source\Engine\Render</Filter>
+      <Filter>Source\Engine\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="src\World.h">
       <Filter>Source\Game\World</Filter>
     </ClInclude>
     <ClInclude Include="src\Transform.h">
-      <Filter>Source\Engine\Render</Filter>
+      <Filter>Source\Engine\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="src\Text.h">
       <Filter>Source\Engine\GUI</Filter>
@@ -105,10 +108,13 @@
     <ClInclude Include="src\Debug.h">
       <Filter>Source\Game\Debugger</Filter>
     </ClInclude>
+    <ClInclude Include="src\Cursor.h">
+      <Filter>Source\Game\Cursor</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Renderer.cpp">
-      <Filter>Source\Engine\Render</Filter>
+      <Filter>Source\Engine\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="src\Main.cpp">
       <Filter>Source</Filter>

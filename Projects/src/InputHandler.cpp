@@ -10,6 +10,8 @@ void InputManager::Update(const float& timeDelta)
   for (auto it = m_keyMap.begin(); it != m_keyMap.end(); it++)
     m_previousKeyMap[it->first] = it->second;
 
+  SDL_PumpEvents(); // we need the LATEST mouse pos
+
   while (SDL_PollEvent(&e))
   {
     switch (e.type)
@@ -54,6 +56,9 @@ void InputManager::Update(const float& timeDelta)
       m_doubleClicker.doubleClickPrev = SDLK_UNKNOWN;
     }
   }
+
+  SDL_GetMouseState(&m_mouseCoords.x, &m_mouseCoords.y);
+
 }
 
 void InputManager::PressKey(unsigned int keyID)

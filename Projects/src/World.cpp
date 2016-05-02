@@ -399,9 +399,10 @@ void World_BuildMesh()
         uint8_t block = world[x + y*worldWidth + z *worldHeight *worldWidth];
         if (block > 0)
         {
-          float b = 1.5 + (y - scrollLayer)*0.03;
+          float b = 1 + (y - scrollLayer)*0.02;
           if (b > 1.0) b = 1.0;
-          if (b < 0.4) b = 0.4;
+          //if (b < 0.4) b = 0.4;
+          if (b < 0.0) b = 0.0;
           bool drawn = false;
           if (y < scrollLayer)
           {

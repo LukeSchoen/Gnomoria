@@ -6,6 +6,7 @@
 #include <glm.hpp>
 #include <stdio.h>
 #include "InputHandler.h"
+#include "Cursor.h"
 #include "FrameRate.h"
 #include "Debug.h"
 
@@ -22,6 +23,9 @@ int wmain(int argc, char *argv[])
 
   InputManager input;
 
+  SDL_ShowCursor(0);
+  SDL_EventState(SDL_MOUSEMOTION, SDL_IGNORE);
+
   //Main loop flag
   bool running = true;
 
@@ -32,7 +36,6 @@ int wmain(int argc, char *argv[])
 
     //Has User Closed program?
     running = !(input.Exit() | input.IsKeyDown(SDLK_ESCAPE));
-
 
     //Render
     Renderer_Clear();
@@ -52,8 +55,9 @@ int wmain(int argc, char *argv[])
 
     UpdateFrameRate();
 
+    input.Update(0.0f); //Update Mouse Pos
+    Cursor_DrawCursor(input.GetMouseCoords(), 2.0);
     Renderer_Swap();
-
   }
 
   //Free engine resources
