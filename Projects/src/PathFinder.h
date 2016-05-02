@@ -1,11 +1,13 @@
 #ifndef pathFinder_h__
 #define pathFinder_h__
 
-#include <vector>
+#include "Containers/DynamicArray.h"
 #include "Math/Vector.h"
 #include <unordered_map>
 #include "world.h"
 #include "Debug.h"
+
+using namespace gm;
 
 struct Path
 {
@@ -56,7 +58,7 @@ float manDist(Vec3i a, Vec3i b)
   return abs(a.x) + abs(a.y) + abs(a.z);
 }
 
-int64_t bestScore(Vec3i end)
+int64_t bestScore(Vec3i start, Vec3i end)
 {
   float bestScore = FLT_MAX;
   int64_t bestKey;
@@ -128,25 +130,25 @@ Path findPath(Vec3i start, Vec3i end)
   while (openSet.size() > 0)
   {
     //find lowest gscore
-    int64_t currentKey = bestScore(end);
+    int64_t currentKey = bestScore(start, end);
     node currentNode = openSet[currentKey];
 
     //return finished path
     if (currentKey == hash(end))
     {
       DebugDisplayPath();
-      std::vector<Vec3i> path;
+      DynamicArray<Vec3i> path;
       while (currentKey != hash(start))
       {
-        path.push_back(unhash(currentKey));
+        path.PushBack(unhash(currentKey));
         currentKey = hash(currentNode.parent);
         currentNode = closedSet[currentKey];
       }
       
-      FinalPath.steps = (Vec3i*)malloc(sizeof(Vec3i) * path.size());
-      FinalPath.length = path.size();
+      FinalPath.steps = (Vec3i*)malloc(sizeof(Vec3i) * path.Length());
+      FinalPath.length = path.Length();
       int i = 0;
-      for (int step = path.size() - 1; step >= 0; step--)
+      for (int step = path.Length() - 1; step >= 0; step--)
       {
         FinalPath.steps[i++] = path[step];
         Debug_AddFloorLine(path[step] - Vec3i(0, 1, 0), Vec3(1.0, 1.0, 1.0));

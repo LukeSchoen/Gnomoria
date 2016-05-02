@@ -105,14 +105,17 @@
     <ClInclude Include="src\Math\Vector2.h">
       <Filter>Source\Math</Filter>
     </ClInclude>
-    <ClInclude Include="src\GContainers\DynamicArray.h">
-      <Filter>Source\Containers</Filter>
-    </ClInclude>
     <ClInclude Include="src\PathFinder.h">
       <Filter>Source\Engine\PathFinder</Filter>
     </ClInclude>
     <ClInclude Include="src\Debug.h">
       <Filter>Source\Game\Debugger</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Containers\DynamicArray.h">
+      <Filter>Source\Containers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Containers\GMemory.h">
+      <Filter>Source\Containers</Filter>
     </ClInclude>
     <ClInclude Include="src\Cursor.h">
       <Filter>Source\Game\Cursor</Filter>
