@@ -19,8 +19,8 @@ const int SCREEN_WIDTH = 512;
 const int SCREEN_HEIGHT = 512;
 const bool FULL_SCREEN = false;
 #else
-const int SCREEN_WIDTH = 1920;
-const int SCREEN_HEIGHT = 1200;
+const int SCREEN_WIDTH = 1024;
+const int SCREEN_HEIGHT = 768;
 const bool FULL_SCREEN = true;
 #endif
 #endif 
@@ -57,6 +57,7 @@ private:
 };
 
 
+int Renderer_GetPolyDrawCount();
 bool Renderer_Initialise(); //open SDL and Window
 void Renderer_Destroy(); //close SDL and window
 void Renderer_Swap(); //Update screen

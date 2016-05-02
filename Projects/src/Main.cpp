@@ -33,6 +33,7 @@ int wmain(int argc, char *argv[])
     //Has User Closed program?
     running = !(input.Exit() | input.IsKeyDown(SDLK_ESCAPE));
 
+
     //Render
     Renderer_Clear();
     World_Draw();
@@ -49,12 +50,9 @@ int wmain(int argc, char *argv[])
     if (camera.y > 80) camera.y = 80;
     if (camera.y < 6) camera.y = 6;
 
-    
-
     UpdateFrameRate();
 
     Renderer_Swap();
-
 
   }
 

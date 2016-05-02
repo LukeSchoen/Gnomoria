@@ -1,5 +1,6 @@
 #include "World.h"
 #include "Renderer.h"
+#include "Camera.h"
 #include "PerlinNoise.h"
 
 uint8_t *world;
@@ -11,10 +12,11 @@ RenderObject *worldMesh = nullptr;
 
 Vec3i World_Solve(int x, int z)
 {
+  int scrollHeight = cam::GetInstance()->scrollLayer;
   int y = 0;
-  x += worldHeight;
-  y += worldHeight;
-  z += worldHeight;
+  x += scrollHeight;
+  y += scrollHeight;
+  z += scrollHeight;
 
   int giveup = 0;
   while (((x < 0) | (y < 0) | (z < 0) | (x >= worldWidth) | (y >= worldHeight) | (z >= worldLength)))
@@ -54,11 +56,16 @@ void World_SetBlock(Vec3i pos, uint32_t blockID)
 
 bool World_IsBlockExposed(uint8_t *world, int w, int h, int l, int x, int y, int z)
 {
+  int scrollLayer = cam::GetInstance()->scrollLayer;
   while (true)
   {
     x++; y++; z++;
     if ((x < 0) | (y < 0) | (z < 0) | (x >= w) | (y >= h) | (z >= l))
       return true;
+
+    if ((y+2) > scrollLayer)
+      return true;
+
     if (world[x + y*w + z *h *l] > 0)
       return false;
   }
@@ -231,8 +238,28 @@ int _GetGrassDecorations(RenderObject *renderer, int x, int y, int z, Vec3 col)
   return 0;
 }
 
+bool _WallBlockIsAir(Vec3i pos)
+{
+  if ((pos.x < 0) | (pos.y < 0) | (pos.z < 0) | (pos.x >= worldWidth) | (pos.y >= worldHeight) | (pos.z >= worldLength))
+    return false;
+  if (world[pos.x + pos.y * worldWidth + pos.z * worldHeight * worldLength] == 0)
+    return true;
+  return false;
+}
 
-
+bool _NearWallAirBlock(Vec3i pos)
+{
+  return(
+    _WallBlockIsAir(pos + Vec3i(-1, 0, 0)) |
+    _WallBlockIsAir(pos + Vec3i(1, 0, 0)) |
+    _WallBlockIsAir(pos + Vec3i(0, 0, -1)) |
+    _WallBlockIsAir(pos + Vec3i(0, 0, 1)) |
+    _WallBlockIsAir(pos + Vec3i(-1, 0, -1)) |
+    _WallBlockIsAir(pos + Vec3i(1, 0, -1)) |
+    _WallBlockIsAir(pos + Vec3i(-1, 0, 1)) |
+    _WallBlockIsAir(pos + Vec3i(1, 0, 1))
+    );
+}
 
 void World_AddTile(RenderObject *renderer, int posx, int posy, int posz, Vec3 col, int tex, int xpixoffset /*= 0*/, int ypixoffset /*= 0*/)
 {
@@ -281,7 +308,10 @@ void World_BuildMesh()
 
   int verts = 0;
   //Make a graphical representation
-  for (int y = 0; y < worldHeight; y++)
+  int scrollLayer = cam::GetInstance()->scrollLayer;
+  int height = scrollLayer + 1;
+  if (height > worldHeight) height = worldHeight;
+  for (int y = 0; y < height; y++)
   {
     for (int x = 0; x < worldWidth; x++)
     {
@@ -292,32 +322,49 @@ void World_BuildMesh()
         {
           float b = y / 80.0f;
           bool drawn = false;
-          if ( //basic wall solve
-            (World_GetBlock(Vec3i(x + 1, y, z)) == 0 &&
-              World_IsBlockExposed(world, worldWidth, worldHeight, worldLength, x + 1, y, z)) ||
-            (World_GetBlock(Vec3i(x, y, z + 1)) == 0 &&
-              World_IsBlockExposed(world, worldWidth, worldHeight, worldLength, x, y, z + 1))
-            )
-            //Wall
-          {
-            verts += 6;
-            drawn = true;
-          }
 
-          if ( //basic floor solve
-            World_GetBlock(Vec3i(x, y + 1, z)) == 0 &&
-            World_IsBlockExposed(world, worldWidth, worldHeight, worldLength, x, y, z)
-            )
-            //Floor
+
+          if (y < scrollLayer)
           {
-            if (block == 4)
+            if ( //basic wall solve
+              (World_GetBlock(Vec3i(x + 1, y, z)) == 0 &&
+                World_IsBlockExposed(world, worldWidth, worldHeight, worldLength, x + 1, y, z)) ||
+              (World_GetBlock(Vec3i(x, y, z + 1)) == 0 &&
+                World_IsBlockExposed(world, worldWidth, worldHeight, worldLength, x, y, z + 1))
+              )
+              //Wall
             {
-              int decoType = _GetGrassDecorations(worldMesh, x, y, z, { b,b,b });
-              if (decoType)
-                verts += 6;
+              verts += 6;
+              drawn = true;
             }
-            verts += 6;
-            drawn = true;
+
+            if ( //basic floor solve
+              World_GetBlock(Vec3i(x, y + 1, z)) == 0 &&
+              World_IsBlockExposed(world, worldWidth, worldHeight, worldLength, x, y, z)
+              )
+              //Floor
+            {
+              if (block == 4)
+              {
+                int decoType = _GetGrassDecorations(worldMesh, x, y, z, { b,b,b });
+                if (decoType)
+                  verts += 6;
+              }
+              verts += 6;
+              drawn = true;
+            }
+          }
+          else
+          {
+            if ( true // wall non solved
+              //World_GetBlock(Vec3i(x + 1, y, z)) == 0 ||
+              //World_GetBlock(Vec3i(x, y, z + 1)) == 0
+              )
+              //Wall
+            {
+              verts += 6;
+            }
+
           }
 
           if (drawn)
@@ -332,11 +379,14 @@ void World_BuildMesh()
     }
   }
 
+
+
+
   worldMesh->ReAllocate(verts);
   worldMesh->Clear();
 
   //Make a graphical representation
-  for (int y = 0; y < worldHeight; y++)
+  for (int y = 0; y < height; y++)
   {
     for (int x = 0; x < worldWidth; x++)
     {
@@ -349,36 +399,54 @@ void World_BuildMesh()
         uint8_t block = world[x + y*worldWidth + z *worldHeight *worldWidth];
         if (block > 0)
         {
-          float b = y / 80.0f;
+          float b = 1.5 + (y - scrollLayer)*0.03;
+          if (b > 1.0) b = 1.0;
+          if (b < 0.4) b = 0.4;
           bool drawn = false;
-          if ( //basic wall solve
-            (World_GetBlock(Vec3i(x + 1, y, z)) == 0 &&
-              World_IsBlockExposed(world, worldWidth, worldHeight, worldLength, x + 1, y, z)) ||
-            (World_GetBlock(Vec3i(x, y, z + 1)) == 0 &&
-              World_IsBlockExposed(world, worldWidth, worldHeight, worldLength, x, y, z + 1))
-            )
+          if (y < scrollLayer)
           {
-            World_AddTile(worldMesh, x, y, z, { b, b, b }, 32 + block);
-            drawn = true;
+            if ( //basic wall solve
+              (World_GetBlock(Vec3i(x + 1, y, z)) == 0 &&
+                World_IsBlockExposed(world, worldWidth, worldHeight, worldLength, x + 1, y, z)) ||
+              (World_GetBlock(Vec3i(x, y, z + 1)) == 0 &&
+                World_IsBlockExposed(world, worldWidth, worldHeight, worldLength, x, y, z + 1))
+              )
+            {
+              World_AddTile(worldMesh, x, y, z, { b, b, b }, 32 + block);
+              drawn = true;
+            }
+
+            if ( //basic floor solve
+              World_GetBlock(Vec3i(x, y + 1, z)) == 0 &&
+              World_IsBlockExposed(world, worldWidth, worldHeight, worldLength, x, y, z)
+              )
+            {
+              float fl = b;
+              int decoType = 0;
+              if (block == 4)
+              {
+                decoType = _GetGrassDecorations(worldMesh, x, y, z, { b,b,b });
+                fl *= 0.9f + (PerlinNoiseGenerator::RandomByte(x + y * 12345 + z * 654321) & 1)*0.1f;
+              }
+              World_AddTile(worldMesh, x, y, z, { fl, fl, fl }, 16 + block);
+              if (decoType)
+                World_AddTile(worldMesh, x, y, z, { b, b, b }, decoType);
+              drawn = true;
+            }
+          }
+          else
+          {
+            if (true //basic wall solve
+              )
+            {
+              if (_NearWallAirBlock(Vec3i(x, y, z)))
+                World_AddTile(worldMesh, x, y, z, { b, b, b }, 32 + block);
+              else
+                World_AddTile(worldMesh, x, y, z, { 0.15f, 0.15f, 0.15f }, 4);
+            }
           }
 
-          if ( //basic floor solve
-            World_GetBlock(Vec3i(x, y + 1, z)) == 0 &&
-            World_IsBlockExposed(world, worldWidth, worldHeight, worldLength, x, y, z)
-            )
-          {
-            float fl = b;
-            int decoType=0;
-            if (block == 4)
-            {
-              decoType = _GetGrassDecorations(worldMesh, x, y, z, { b,b,b });
-              fl *= 0.9f + (PerlinNoiseGenerator::RandomByte(x + y * 12345 + z * 654321) & 1)*0.1f;
-            }
-            World_AddTile(worldMesh, x, y, z, { fl, fl, fl }, 16 + block);
-            if (decoType)
-              World_AddTile(worldMesh, x, y, z, { b, b, b }, decoType);
-            drawn = true;
-          }
+
           if (drawn)
           {
             if (World_GetBlock(Vec3i(x - 1, y, z)) == 0)

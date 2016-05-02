@@ -114,7 +114,14 @@ Path findPath(Vec3i start, Vec3i end)
   openSet.clear();
   closedSet.clear();
 
-  openSet.emplace(hash(start), node(start, 0, manDist(start, end)));
+  //Start the process
+  //openSet.emplace(hash(start), node(start, 0, manDist(start, end)));
+  AddNeighbour(start + Vec3i(1, 0, 0), start, end, node(start, 0, manDist(start, end)));
+  AddNeighbour(start + Vec3i(-1, 0, 0), start, end, node(start, 0, manDist(start, end)));
+  AddNeighbour(start + Vec3i(0, 1, 0), start, end, node(start, 0, manDist(start, end)));
+  AddNeighbour(start + Vec3i(0, -1, 0), start, end, node(start, 0, manDist(start, end)));
+  AddNeighbour(start + Vec3i(0, 0, 1), start, end, node(start, 0, manDist(start, end)));
+  AddNeighbour(start + Vec3i(0, 0, -1), start, end, node(start, 0, manDist(start, end)));
 
   Path FinalPath;
     

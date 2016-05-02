@@ -33,7 +33,7 @@ private:
   std::unordered_map<unsigned int, bool> m_keyMap;
   std::unordered_map<unsigned int, bool> m_previousKeyMap;
   Vec2i m_mouseCoords;
-  int m_scroll;
+  int m_scroll = 0;
   bool m_exitCommand = false;
 
   struct doubleClick

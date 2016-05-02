@@ -6,7 +6,7 @@
 static int frameRate = 0;
 static int lastFrame = 0;
 static int frames = 0;
-static char text[32];
+static char text[256];
 
 void UpdateFrameRate()
 {
@@ -18,7 +18,8 @@ void UpdateFrameRate()
     lastFrame = clock();
   }
   
-  sprintf(text, "%d", frameRate);
+  int tris = Renderer_GetPolyDrawCount();
+  sprintf(text, "%d FPS %dK POLYs", frameRate, (tris+499) / 1000);
   float Aspect = (SCREEN_WIDTH / (SCREEN_HEIGHT + 0.0));
   Text_Draw(text, Vec2(-Aspect, -1), 0.5);
 }

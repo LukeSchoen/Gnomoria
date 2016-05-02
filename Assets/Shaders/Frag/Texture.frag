@@ -19,7 +19,7 @@ void main()
 {
 
 	vec4 t = texture( TextureSampler, vec2(UV.x, UV.y) ).rgba;
-	t.rgb = saturate(t.rgb, 1.5);
+	t.rgb = saturate(t.rgb, 1.0);
 	vec4 m = vec4(VERTCOLOR, 1.0);
 	color = t * m;
 	

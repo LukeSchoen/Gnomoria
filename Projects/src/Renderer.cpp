@@ -44,6 +44,9 @@ GLuint gLocCAM = -1;
 GLint gLocVertexPos4D = -1;
 GLuint gLocTextureSampler = -1;
 
+//Overall Draw Count Recorder
+static int PolyCount = 0;
+
 bool _TexelExists(uint8_t *img, int w, int h, int x, int y);
 
 Vert::Vert(Vec3 Position, Vec3 Color, Vec2 UVs)
@@ -247,6 +250,8 @@ void RenderObject::Render()
   //draw data
   glDrawArrays(GL_TRIANGLES, 0, vertexCount);
 
+  PolyCount += vertexCount / 3;
+
   //Unbind Vert Shader Attributes
   glDisableVertexAttribArray(0);
   glDisableVertexAttribArray(1);
@@ -264,6 +269,13 @@ void RenderObject::Destroy()
 }
 
 
+
+int Renderer_GetPolyDrawCount()
+{
+  int t = PolyCount;
+  PolyCount = 0;
+  return t;
+}
 
 void _printProgramLog(GLuint program)
 {

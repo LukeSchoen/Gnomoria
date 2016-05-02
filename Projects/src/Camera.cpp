@@ -58,15 +58,24 @@ void cam::UpdateMouseControls(Vec2i MousePos, bool leftClick, bool rightClick, i
 
   Vec3i pos = Transform_ScreenToWorld(MousePos);
 
+  if (scroll != 0)
+  {
+    scrollLayer += scroll;
+    z -= scroll;
+    World_BuildMesh();
+  }
 
-  char posStr[256];
-  sprintf(posStr, "%d %d %d", pos.x, pos.y, pos.z);
+  static char posStr[256];
+  sprintf(posStr, "mouse x%d y%d z%d", pos.x, pos.y, pos.z);
+  float Aspect = (SCREEN_WIDTH / (SCREEN_HEIGHT + 0.0));
+  Text_Draw(posStr, Vec2(-Aspect, -1+0.05), 0.5);
 
-  Text_Draw(posStr, Vec2(-1, -1), 1);
-
-  World_AddTile(selection, pos.x, pos.y, pos.z, Vec3(1.0, 1.0, 1.0), 4);
-  selection->UploadToGPU();
-  selection->Render();
+  if (pos != Vec3i(-1, -1, -1))
+  {
+    World_AddTile(selection, pos.x, pos.y, pos.z, Vec3(1.0, 1.0, 1.0), 4);
+    selection->UploadToGPU();
+    selection->Render();
+  }
 
 
   static Vec3i start;
@@ -77,6 +86,7 @@ void cam::UpdateMouseControls(Vec2i MousePos, bool leftClick, bool rightClick, i
 
   if (leftClick && (!lastLMouseDown))
   {
+    Debug_Clear();
     started = true;
     start = pos + Vec3i(0, 1, 0);
     clicked = true;
@@ -85,6 +95,7 @@ void cam::UpdateMouseControls(Vec2i MousePos, bool leftClick, bool rightClick, i
 
   if (rightClick && (!lastRMouseDown))
   {
+    Debug_Clear();
     ended = true;
     end = pos + Vec3i(0, 1, 0);
     clicked = true;
