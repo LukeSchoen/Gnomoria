@@ -52,6 +52,9 @@
     <Filter Include="Source\Engine\Renderer">
       <UniqueIdentifier>{f874ef3c-14f3-4a3f-97c3-f0c45c8d5330}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Engine\Audio">
+      <UniqueIdentifier>{6e455702-a623-4e03-a4ea-13a62a3ec7c0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Renderer.h">
@@ -120,6 +123,9 @@
     <ClInclude Include="src\Cursor.h">
       <Filter>Source\Game\Cursor</Filter>
     </ClInclude>
+    <ClInclude Include="src\Audio.h">
+      <Filter>Source\Engine\Audio</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Renderer.cpp">
@@ -151,6 +157,9 @@
     </ClCompile>
     <ClCompile Include="src\Debug.cpp">
       <Filter>Source\Game\Debugger</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Audio.cpp">
+      <Filter>Source\Engine\Audio</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

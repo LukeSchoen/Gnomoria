@@ -1,4 +1,5 @@
 #include "Renderer.h"
+#include "Audio.h"
 #include "World.h"
 #include "Camera.h"
 #include "Text.h"
@@ -14,6 +15,8 @@
 int wmain(int argc, char *argv[])
 {  
   if (!Renderer_Initialise()) {printf("Failed to initialize!\n"); getchar(); return 1;}
+
+  Audio_PlayMP3("Assets\\music\\DaysWork.mp3");
 
   World_LoadWorld();
   Text_Initialize();
