@@ -1,13 +1,14 @@
 #include "GMemory.h"
 #include <algorithm>
+#include <type_traits>
 
 namespace gm
 {
   template<typename T, size_t reallocationSize = 0>
-  struct DynamicArray
+  struct List
   {
 
-    DynamicArray(size_t initialCapacity = 0)
+    List(size_t initialCapacity = 0)
       : length(0)
       , capacity(0)
       , data(nullptr)
@@ -16,7 +17,7 @@ namespace gm
     }
 
     template <size_t otherAllocationSize>
-    DynamicArray(DynamicArray<T, otherAllocationSize> const &other)
+    List(List<T, otherAllocationSize> const &other)
       : length(0)
       , capacity(0)
       , data(nullptr)
@@ -39,7 +40,7 @@ namespace gm
     {
       if (length + 1 > capacity)
         Resize(OverFlowSize());
-      data[length] = value;
+      data[length] = std::forward<T>(value);
       return data[length++];
     }
 
@@ -51,11 +52,19 @@ namespace gm
       return data[length++]
     }
 
+    template<typename ...Args>
+    T &EmplaceBack(Args... args)
+    {
+      if (length + 1 > capacity)
+        Resize(OverFlowSize());
+      return *(new(data + length) T(std::forward<Args>(args)...));
+    }
+
     T &operator[](size_t index) { return data[index]; }
 
     T const &operator[](size_t index) const { return data[index]; }
 
-    ~DynamicArray()
+    ~List()
     {
       Clear();
       gmFree(data);
@@ -64,8 +73,9 @@ namespace gm
 
     void Clear()
     {
-      for (size_t i = 0; i < length; i++)
-        data[i].~T();
+      if(!std::is_trivially_destructible<T>::value)
+        for (size_t i = 0; i < length; i++)
+          data[i].~T();
       length = 0;
     }
 
@@ -82,7 +92,7 @@ namespace gm
     }
 
     template<size_t otherAllocationSize>
-    DynamicArray<T, reallocationSize> &operator=(DynamicArray<T, otherAllocationSize> const &other)
+    List<T, reallocationSize> &operator=(List<T, otherAllocationSize> const &other)
     {
       Clear();
       length = other.Length();
@@ -92,7 +102,7 @@ namespace gm
     }
 
     template<size_t otherAllocationSize>
-    DynamicArray<T, reallocationSize> &operator=(DynamicArray<T, otherAllocationSize>&& other)
+    List<T, reallocationSize> &operator=(List<T, otherAllocationSize>&& other)
     {
       Clear();
       gmFree(data);

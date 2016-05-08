@@ -137,7 +137,7 @@ Path findPath(Vec3i start, Vec3i end)
     if (currentKey == hash(end))
     {
       DebugDisplayPath();
-      DynamicArray<Vec3i> path;
+      List<Vec3i> path;
       while (currentKey != hash(start))
       {
         path.PushBack(unhash(currentKey));
