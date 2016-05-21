@@ -222,7 +222,7 @@ uint8_t * World_LoadFromSchematic(char *MapPath, int &width, int &height, int &d
 
 void World_LoadWorld()
 {
-  world = World_LoadFromSchematic("Assets\\schematics\\world.schematic", worldWidth, worldHeight, worldLength);
+  world = World_LoadFromSchematic("Assets\\schematics\\small.schematic", worldWidth, worldHeight, worldLength);
   World_BuildMesh();
 }
 

@@ -10,9 +10,6 @@
 #include <string>
 #include <tchar.h>
 
-#include <glm.hpp>
-#include <gtc/matrix_transform.hpp>
-
 #include "SDL.h"
 #include <gl\glew.h>
 #include <SDL_opengl.h>
@@ -226,7 +223,7 @@ void RenderObject::Render()
 
   //upload camera uniform
   cam &cam = *cam::GetInstance();
-  glm::vec4 ShaderCam(cam.x, cam.y, cam.z, (SCREEN_HEIGHT + 0.0f) / SCREEN_WIDTH);
+  Vec4 ShaderCam(cam.x, cam.y, cam.z, (SCREEN_HEIGHT + 0.0f) / SCREEN_WIDTH);
   glUniform4fv(gLocCAM, 1, (GLfloat*)&ShaderCam);
 
   //configure vertex attributes
@@ -527,7 +524,8 @@ void Renderer_Clear()
 void Renderer_Swap()
 {
   SDL_GL_SwapWindow(gWindow);
-  glFinish();
+  if(USE_VSYNC)
+    glFinish();
 }
 
 bool _TexelExists(uint8_t *img, int w, int h, int x, int y)

@@ -31,9 +31,6 @@
     <Filter Include="Source\Math">
       <UniqueIdentifier>{1b16f265-6d42-4e10-9c96-ae4db604d76c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Game\InputHandler">
-      <UniqueIdentifier>{4086db20-3ba2-448e-acb1-b758e4ad1e34}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source\Engine\Performance">
       <UniqueIdentifier>{f0ad8b3e-a92f-4989-91fa-f83ac857c246}</UniqueIdentifier>
     </Filter>
@@ -55,13 +52,43 @@
     <Filter Include="Source\Engine\Audio">
       <UniqueIdentifier>{6e455702-a623-4e03-a4ea-13a62a3ec7c0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Game\World\Chunk">
+      <UniqueIdentifier>{17529080-3bcc-4f47-8ba2-bab215f2fd10}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Game\World\Block">
+      <UniqueIdentifier>{f9f15ac3-b8d1-4f00-bc78-40c63df5d24c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Game\World\Access">
+      <UniqueIdentifier>{45cf9705-025a-4381-9325-10e7cc804a22}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Game\World\Occlusion">
+      <UniqueIdentifier>{1e60b446-4735-4e49-b500-34cbe2d8fdda}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Game\Camera">
+      <UniqueIdentifier>{92eef0af-c43b-4b44-b255-16f18f311272}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Game\World\Draw">
+      <UniqueIdentifier>{fa83b94a-bcf6-4301-ad2f-ff36a9a458d0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Game\World\Tile">
+      <UniqueIdentifier>{de0c5f63-1949-419d-9226-c19c7d7bbbe9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Engine\Transforms">
+      <UniqueIdentifier>{dd6a0117-0629-4861-816a-fbf59766722c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Engine\CronoCache">
+      <UniqueIdentifier>{f36493ec-e35e-49a5-9ef4-8156c2356d39}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Engine\DenseHashMap">
+      <UniqueIdentifier>{86b10283-a499-42d3-8705-82ac58322110}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Game\Noise\InputHandler">
+      <UniqueIdentifier>{4086db20-3ba2-448e-acb1-b758e4ad1e34}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Renderer.h">
       <Filter>Source\Engine\Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Camera.h">
-      <Filter>Source\Game\World</Filter>
     </ClInclude>
     <ClInclude Include="src\PerlinNoise.h">
       <Filter>Source\Game\Noise</Filter>
@@ -74,9 +101,6 @@
     </ClInclude>
     <ClInclude Include="src\World.h">
       <Filter>Source\Game\World</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Transform.h">
-      <Filter>Source\Engine\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="src\Text.h">
       <Filter>Source\Engine\GUI</Filter>
@@ -97,7 +121,7 @@
       <Filter>Source\Math</Filter>
     </ClInclude>
     <ClInclude Include="src\InputHandler.h">
-      <Filter>Source\Game\InputHandler</Filter>
+      <Filter>Source\Game\Noise\InputHandler</Filter>
     </ClInclude>
     <ClInclude Include="src\FrameRate.h">
       <Filter>Source\Engine\Performance</Filter>
@@ -126,6 +150,39 @@
     <ClInclude Include="src\Audio.h">
       <Filter>Source\Engine\Audio</Filter>
     </ClInclude>
+    <ClInclude Include="src\Chunk.h">
+      <Filter>Source\Game\World\Chunk</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Block.h">
+      <Filter>Source\Game\World\Block</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ChunkCache.h">
+      <Filter>Source\Game\World\Chunk</Filter>
+    </ClInclude>
+    <ClInclude Include="src\WorldOcclusion.h">
+      <Filter>Source\Game\World\Occlusion</Filter>
+    </ClInclude>
+    <ClInclude Include="src\WorldAccess.h">
+      <Filter>Source\Game\World\Access</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Camera.h">
+      <Filter>Source\Game\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="src\WorldDraw.h">
+      <Filter>Source\Game\World\Draw</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Tile.h">
+      <Filter>Source\Game\World\Tile</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Transforms.h">
+      <Filter>Source\Engine\Transforms</Filter>
+    </ClInclude>
+    <ClInclude Include="src\CronoCache.h">
+      <Filter>Source\Engine\CronoCache</Filter>
+    </ClInclude>
+    <ClInclude Include="src\DenseHashMap.h">
+      <Filter>Source\Engine\DenseHashMap</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Renderer.cpp">
@@ -140,9 +197,6 @@
     <ClCompile Include="src\RealTimeEngine.cpp">
       <Filter>Source\Engine\RealTime</Filter>
     </ClCompile>
-    <ClCompile Include="src\Camera.cpp">
-      <Filter>Source\Game\World</Filter>
-    </ClCompile>
     <ClCompile Include="src\World.cpp">
       <Filter>Source\Game\World</Filter>
     </ClCompile>
@@ -153,13 +207,46 @@
       <Filter>Source\Math</Filter>
     </ClCompile>
     <ClCompile Include="src\InputHandler.cpp">
-      <Filter>Source\Game\InputHandler</Filter>
+      <Filter>Source\Game\Noise\InputHandler</Filter>
     </ClCompile>
     <ClCompile Include="src\Debug.cpp">
       <Filter>Source\Game\Debugger</Filter>
     </ClCompile>
     <ClCompile Include="src\Audio.cpp">
       <Filter>Source\Engine\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Chunk.cpp">
+      <Filter>Source\Game\World\Chunk</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Block.cpp">
+      <Filter>Source\Game\World\Block</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ChunkCache.cpp">
+      <Filter>Source\Game\World\Chunk</Filter>
+    </ClCompile>
+    <ClCompile Include="src\WorldOcclusion.cpp">
+      <Filter>Source\Game\World\Occlusion</Filter>
+    </ClCompile>
+    <ClCompile Include="src\WorldAccess.cpp">
+      <Filter>Source\Game\World\Access</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Camera.cpp">
+      <Filter>Source\Game\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="src\WorldDraw.cpp">
+      <Filter>Source\Game\World\Draw</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Tile.cpp">
+      <Filter>Source\Game\World\Tile</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Transforms.cpp">
+      <Filter>Source\Engine\Transforms</Filter>
+    </ClCompile>
+    <ClCompile Include="src\CronoCache.cpp">
+      <Filter>Source\Engine\CronoCache</Filter>
+    </ClCompile>
+    <ClCompile Include="src\DenseHashMap.cpp">
+      <Filter>Source\Engine\DenseHashMap</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

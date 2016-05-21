@@ -1,10 +1,8 @@
-#ifndef Transform_h__
-#define Transform_h__
-
+#include "Transforms.h"
 #include "camera.h"
 #include "renderer.h"
 #include "world.h"
-#include "Math/Vector.h"
+#include "chunk.h"
 #include <math.h>
 
 //Space Transforms
@@ -23,6 +21,14 @@ Vec2 Transform_DeviceToIso(Vec2 mousePos)
   return Vec2(x, y * 2);
 }
 
+Vec3 Transform_OrthoToIso(Vec3 Pos)
+{
+  float isoX = Pos.x - Pos.z;
+  float isoY = Pos.y;
+  float isoZ = Pos.x + Pos.z - Pos.y * 2;
+  return Vec3(isoX, isoY, isoZ);
+}
+
 Vec2 Transform_IsoToOrtho(Vec2 IsoPos)
 {
   Vec2 i = IsoPos - Vec2(1, 1);
@@ -38,17 +44,11 @@ Vec3i Transform_ScreenToWorld(Vec2i ScreenPos)
   return World_Solve((int)round(OrthoSpace.x), (int)round(OrthoSpace.y));
 }
 
-Vec2 Transform_Test1(Vec2i ScreenPos)
+Vec3i Transform_BlockToChunk(Vec3i value)
 {
-  Vec2 DeviceSpace = Transform_ScreenToDevice(ScreenPos);
-  Vec2 IsoSpace = Transform_DeviceToIso(DeviceSpace);
-  return Transform_IsoToOrtho(IsoSpace);
+  static int offset = 10000;
+  static Vec3i coffset(offset * Chunk::width, 0, offset * Chunk::length);
+  //Truncation is not the same as floor for negatives so we use an offset to keep things positive
+  value += coffset;
+  return Vec3i(value.x / Chunk::width - offset, value.y / Chunk::height, value.z / Chunk::length - offset);
 }
-
-Vec2 Transform_Test2(Vec2i ScreenPos)
-{
-  Vec2 DeviceSpace = Transform_ScreenToDevice(ScreenPos);
-  return Transform_DeviceToIso(DeviceSpace);
-}
-
-#endif // Transform_h__

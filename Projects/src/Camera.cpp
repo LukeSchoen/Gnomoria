@@ -1,12 +1,9 @@
 #include "Camera.h"
 #include "Renderer.h"
 #include "Text.h"
-#include "Transform.h"
+#include "Transforms.h"
 #include "SDL_keycode.h"
-
 #include "PathFinder.h"
-
-//static cam *instance;
 
 cam::cam(Vec3 Pos)
 {

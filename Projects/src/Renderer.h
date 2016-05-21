@@ -5,18 +5,18 @@
 
 const int USE_VSYNC = 1;
 
-//#define testWindow
+#define testWindow
 
 #ifdef _DEBUG
 //Window resolution
-const int SCREEN_WIDTH = 480;
-const int SCREEN_HEIGHT = 480;
+const int SCREEN_WIDTH = 800;
+const int SCREEN_HEIGHT = 600;
 const bool FULL_SCREEN = false;
 #else
 #ifdef testWindow
 //Window resolution
-const int SCREEN_WIDTH = 512;
-const int SCREEN_HEIGHT = 512;
+const int SCREEN_WIDTH = 800;
+const int SCREEN_HEIGHT = 600;
 const bool FULL_SCREEN = false;
 #else
 const int SCREEN_WIDTH = 1024;
