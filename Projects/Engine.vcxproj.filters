@@ -76,14 +76,20 @@
     <Filter Include="Source\Engine\Transforms">
       <UniqueIdentifier>{dd6a0117-0629-4861-816a-fbf59766722c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Engine\CronoCache">
-      <UniqueIdentifier>{f36493ec-e35e-49a5-9ef4-8156c2356d39}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source\Engine\DenseHashMap">
       <UniqueIdentifier>{86b10283-a499-42d3-8705-82ac58322110}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source\Game\Noise\InputHandler">
       <UniqueIdentifier>{4086db20-3ba2-448e-acb1-b758e4ad1e34}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Engine\ChronoCache">
+      <UniqueIdentifier>{f36493ec-e35e-49a5-9ef4-8156c2356d39}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Engine\LinkedList">
+      <UniqueIdentifier>{2c90ab0a-a78b-4c16-ad48-035e4cc249c7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Engine\MemoryPool">
+      <UniqueIdentifier>{b95dea33-279f-4a40-a32a-01867afa5374}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -177,11 +183,17 @@
     <ClInclude Include="src\Transforms.h">
       <Filter>Source\Engine\Transforms</Filter>
     </ClInclude>
-    <ClInclude Include="src\CronoCache.h">
-      <Filter>Source\Engine\CronoCache</Filter>
-    </ClInclude>
     <ClInclude Include="src\DenseHashMap.h">
       <Filter>Source\Engine\DenseHashMap</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ChronoCache.h">
+      <Filter>Source\Engine\ChronoCache</Filter>
+    </ClInclude>
+    <ClInclude Include="src\LinkedList.h">
+      <Filter>Source\Engine\LinkedList</Filter>
+    </ClInclude>
+    <ClInclude Include="src\MemoryPool.h">
+      <Filter>Source\Engine\MemoryPool</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -242,11 +254,17 @@
     <ClCompile Include="src\Transforms.cpp">
       <Filter>Source\Engine\Transforms</Filter>
     </ClCompile>
-    <ClCompile Include="src\CronoCache.cpp">
-      <Filter>Source\Engine\CronoCache</Filter>
-    </ClCompile>
     <ClCompile Include="src\DenseHashMap.cpp">
       <Filter>Source\Engine\DenseHashMap</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ChronoCache.cpp">
+      <Filter>Source\Engine\ChronoCache</Filter>
+    </ClCompile>
+    <ClCompile Include="src\LinkedList.cpp">
+      <Filter>Source\Engine\LinkedList</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MemoryPool.cpp">
+      <Filter>Source\Engine\MemoryPool</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

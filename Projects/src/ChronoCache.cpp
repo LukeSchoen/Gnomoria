@@ -1,4 +1,4 @@
-#include "CronoCache.h"
+#include "ChronoCache.h"
 #include "Transforms.h"
 #include <assert.h>
 
@@ -10,20 +10,21 @@ struct cacheNode
   int64_t hash;
 };
 
-CronoCache::CronoCache(int CacheSize)
+ChronoCache::ChronoCache(int CacheSize)
 {
   MaxItemCount = CacheSize;
   nodeList = new cacheNode[CacheSize];
 }
 
-int CronoCache::GetDataAddress(int64_t hash, bool &isLoaded)
+int ChronoCache::GetDataAddress(int64_t hash, bool &isLoaded)
 {
   // Is the data already in the cache?
   int64_t nodeID;
   if (nodeLookup.Obtain(hash, nodeID))
   {
+    isLoaded = true;
     // if this node is not the head then make it the head
-    if (nodeID != listStart)
+    if (nodeID != listStart && false)
     {
       cacheNode &current = nodeList[nodeID];
       cacheNode &next = nodeList[current.fwrdPtr];
@@ -40,8 +41,9 @@ int CronoCache::GetDataAddress(int64_t hash, bool &isLoaded)
   }
   else
   {
+    isLoaded = false;
     if (CurrentItemCount < MaxItemCount)
-    {// Filling up cache for the first time
+    { // Filling up cache for the first time
       if (CurrentItemCount > 0)
       {
         uint32_t secondPtr = listStart;
@@ -72,7 +74,7 @@ int CronoCache::GetDataAddress(int64_t hash, bool &isLoaded)
       }
     }
     else
-    {// the cache has filled up so we are replacing old cached data
+    { // the cache has filled up so we are replacing old cached data
       cacheNode &last = nodeList[listEnd];
       cacheNode &secondLast = nodeList[last.backPtr];
       uint32_t newStart = listEnd;

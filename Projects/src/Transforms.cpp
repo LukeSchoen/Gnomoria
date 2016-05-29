@@ -48,7 +48,7 @@ Vec3i Transform_BlockToChunk(Vec3i value)
 {
   static int offset = 10000;
   static Vec3i coffset(offset * Chunk::width, 0, offset * Chunk::length);
-  //Truncation is not the same as floor for negatives so we use an offset to keep things positive
+  //Truncation is not the same as floor for negatives so we use an offset to keep things always positive
   value += coffset;
   return Vec3i(value.x / Chunk::width - offset, value.y / Chunk::height, value.z / Chunk::length - offset);
 }

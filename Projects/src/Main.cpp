@@ -40,7 +40,7 @@ int wmain(int argc, char *argv[])
   gameWorld.Load("Assets\\Worlds\\test");
   WorldDraw worldDrawer = *WorldDraw::GetInstance();
 
-  RenderObject chunk = worldDrawer.BuildRegionMesh(Vec2i(-64, -64), Vec2i(128, 128), 128);
+  RenderObject chunk = worldDrawer.BuildRegionMesh(Vec2i(-256, -256), Vec2i(512, 512), 128);
   chunk.UploadToGPU();
 
   printf("%d\n", gameWorld.GetBlock( Vec3i(0,55,0) ).floorType);

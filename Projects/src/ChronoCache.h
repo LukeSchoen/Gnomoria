@@ -1,5 +1,5 @@
-#ifndef CronoCache_h__
-#define CronoCache_h__
+#ifndef ChronoCache_h__
+#define ChronoCache_h__
 
 #include <stdint.h>
 #include "Math/Vector.h"
@@ -11,11 +11,11 @@ struct DenseHashMap;
 struct cacheNode;
 
 
-struct CronoCache
+struct ChronoCache
 {
 public:
 
-  CronoCache(int CacheSize = 512);
+  ChronoCache(int CacheSize = 512);
 
   int GetDataAddress(int64_t hash, bool &dataIsCached);
   
@@ -35,4 +35,4 @@ private:
 
 };
 
-#endif // CronoCache_h__
+#endif // ChronoCache_h__

@@ -266,7 +266,6 @@ void RenderObject::Destroy()
 }
 
 
-
 int Renderer_GetPolyDrawCount()
 {
   int t = PolyCount;

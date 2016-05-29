@@ -13,7 +13,6 @@ public:
   void SetFolder(char* directory);
 private:
   char* chunkPath =nullptr;
-  bool Loaded = false;
 };
 
 #endif ChunkCache_h__
