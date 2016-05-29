@@ -4,32 +4,23 @@
 #include <stdint.h>
 #include "Math/Vector.h"
 #include "DenseHashmap.h"
-
-
-struct DenseHashMap;
-
-struct cacheNode;
-
+#include "LinkedList.h"
 
 struct ChronoCache
 {
 public:
 
-  ChronoCache(int CacheSize = 512);
+  ChronoCache(int CacheSize = 0);
 
   int GetDataAddress(int64_t hash, bool &dataIsCached);
   
 private:
 
-  uint32_t listStart = 0;
-
-  uint32_t listEnd = 0;
-
   uint32_t CurrentItemCount = 0;
 
   uint32_t MaxItemCount = 0;
 
-  cacheNode *nodeList;
+  LinkedList<int64_t> nodeList;
 
   DenseHashMap nodeLookup;
 

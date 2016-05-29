@@ -40,7 +40,7 @@
     <ClInclude Include="src\Math\Vector2.h" />
     <ClInclude Include="src\Math\Vector3.h" />
     <ClInclude Include="src\Math\Vector4.h" />
-    <ClInclude Include="src\MemoryPool.h" />
+    <ClInclude Include="src\Pool.h" />
     <ClInclude Include="src\Tile.h" />
     <ClInclude Include="src\WorldAccess.h" />
     <ClInclude Include="src\PathFinder.h" />
@@ -67,7 +67,7 @@
     <ClCompile Include="src\LinkedList.cpp" />
     <ClCompile Include="src\Main.cpp" />
     <ClCompile Include="src\Math\Matrix4.cpp" />
-    <ClCompile Include="src\MemoryPool.cpp" />
+    <ClCompile Include="src\Pool.cpp" />
     <ClCompile Include="src\Tile.cpp" />
     <ClCompile Include="src\Transforms.cpp" />
     <ClCompile Include="src\WorldAccess.cpp" />

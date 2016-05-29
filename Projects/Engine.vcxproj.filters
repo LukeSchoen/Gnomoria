@@ -88,7 +88,7 @@
     <Filter Include="Source\Engine\LinkedList">
       <UniqueIdentifier>{2c90ab0a-a78b-4c16-ad48-035e4cc249c7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Engine\MemoryPool">
+    <Filter Include="Source\Engine\Pool">
       <UniqueIdentifier>{b95dea33-279f-4a40-a32a-01867afa5374}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -192,8 +192,8 @@
     <ClInclude Include="src\LinkedList.h">
       <Filter>Source\Engine\LinkedList</Filter>
     </ClInclude>
-    <ClInclude Include="src\MemoryPool.h">
-      <Filter>Source\Engine\MemoryPool</Filter>
+    <ClInclude Include="src\Pool.h">
+      <Filter>Source\Engine\Pool</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -260,11 +260,9 @@
     <ClCompile Include="src\ChronoCache.cpp">
       <Filter>Source\Engine\ChronoCache</Filter>
     </ClCompile>
-    <ClCompile Include="src\LinkedList.cpp">
-      <Filter>Source\Engine\LinkedList</Filter>
-    </ClCompile>
-    <ClCompile Include="src\MemoryPool.cpp">
-      <Filter>Source\Engine\MemoryPool</Filter>
+    <ClCompile Include="src\LinkedList.cpp" />
+    <ClCompile Include="src\Pool.cpp">
+      <Filter>Source\Engine\Pool</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
