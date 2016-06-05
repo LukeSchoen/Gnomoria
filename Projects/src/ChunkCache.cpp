@@ -1,7 +1,9 @@
 #include "ChunkCache.h"
-#include <assert.h>
 #include "Transforms.h"
 #include "ChronoCache.h"
+#include <assert.h>
+#include <stdio.h>
+#include "GString.h"
 
 const int CacheSize = 512;
 ChronoCache chunkCache(CacheSize);
@@ -22,37 +24,20 @@ char* BlockPosToChunkName(Vec3i BlockPosition, char* prefix = nullptr)
   return chunkName;
 }
 
-void LoadChunk(char* chunkPath, void* memoryLocation)
-{
-  FILE* f = fopen(chunkPath, "rb");
-  if (f)
-  {
-    fread(memoryLocation, Chunk::discSize, 1, f);
-    fclose(f);
-  }
-  else
-  {
-    assert(false); //Chunk file not found
-  }
-}
-
-void SaveChunk(char* chunkPath, void* memoryLocation)
-{
-  FILE* f = fopen(chunkPath, "wb");
-  if (f)
-  {
-    fwrite(memoryLocation, Chunk::discSize, 1, f);
-    fclose(f);
-  }
-  else
-  {
-    assert(false); // Chunk file cannot be opened or created!
-  }
-}
-
 void ChunkCache::SetFolder(char* directory)
 {
-  chunkPath = directory;
+  delete[] chunkPath;
+  chunkPath = strcpy(directory);
+}
+
+void ChunkCache::SaveChunks()
+{
+  for (int chunkID = 0; chunkID < CacheSize; chunkID++)
+    if (chunkChanged[chunkID])
+    {
+      Chunk_Save(BlockPosToChunkName(chunkLocation[chunkID], chunkPath), &chunkData[chunkID]);
+      chunkChanged[chunkID] = false;
+    }
 }
 
 Chunk &ChunkCache::GetChunk(Vec3i blockPos)
@@ -63,23 +48,20 @@ Chunk &ChunkCache::GetChunk(Vec3i blockPos)
   if (!Loaded)
   {
     if (chunkChanged[cacheLoc]) // Save the previously loaded chunk if it has been changed
-      SaveChunk(BlockPosToChunkName(chunkLocation[cacheLoc], chunkPath), &chunkData[cacheLoc]);
-    LoadChunk(BlockPosToChunkName(blockPos, chunkPath), &chunkData[cacheLoc]);
+      Chunk_Save(BlockPosToChunkName(chunkLocation[cacheLoc], chunkPath), &chunkData[cacheLoc]);
+    Chunk_Load(BlockPosToChunkName(blockPos, chunkPath), &chunkData[cacheLoc]);
     chunkChanged[cacheLoc] = false;
     chunkLocation[cacheLoc] = blockPos;
   }
   return chunkData[cacheLoc];
 }
 
-void ChunkCache::SetChunk(Vec3i blockPos, Chunk &NewChunk)
+void ChunkCache::SetChunk(Vec3i blockPos)
 {
-  int64_t hash = hashVec3i(blockPos);
+  int64_t hash = hashVec3i(Transform_BlockToChunk(blockPos));
   bool Loaded;
   int cacheLoc = chunkCache.GetDataAddress(hash, Loaded);
-  if (!Loaded)
-  {
-    assert(false); //Attempt to modify an unloaded chunk!
-  }
+  if (!Loaded) assert(false); //Attempt to tag an unloaded chunk as being modified!
   chunkChanged[cacheLoc] = true;
 }
 

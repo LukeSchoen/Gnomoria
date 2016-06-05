@@ -14,9 +14,12 @@ public:
   Block GetBlock(Vec3i BlockWorldPos);
   void SetBlock(Vec3i BlockWorldPos, Block newBlock);
 
+  Vec3i GetSize();
+
 private:
   bool Loaded = false;
-  char* filePath = nullptr;
+  char* worldFilePath = nullptr;
+  Vec3i worldSize;
 
 };
 #endif WorldAccess_h__

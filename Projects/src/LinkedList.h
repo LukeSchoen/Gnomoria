@@ -5,20 +5,26 @@
 #include "Pool.h"
 
 template <typename T>
-struct ListNode;
+struct LinkListNode
+{
+  T value;
+  int32_t fwrdPtr;
+  int32_t backPtr;
+};
+
 
 template <typename T>
 struct LinkedList
 {
   LinkedList(int MaxItemCount = 0);
 
-  void Initialie(int MaxItemCount);
+  void Initialize(int MaxItemCount);
 
   int32_t Insert(T item, int32_t itemPtr);
 
   T Obtain(int32_t itemPtr);
 
-  void Move(int32_t sourceItemPtr, int32_t destinationItemPtr);
+  void MoveToStart(int32_t itemPtr);
 
   void Delete (int32_t itemPtr);
 
@@ -32,9 +38,11 @@ struct LinkedList
 
 private:
 
-  int32_t ListStart = -1;
+  typedef LinkListNode<T> ListNode;
 
-  int32_t ListEnd = -1;
+  int32_t ListStart = 0;
+
+  int32_t ListEnd = 0;
 
   int32_t ItemCount = 0;
 
@@ -42,5 +50,8 @@ private:
 
   Pool ItemPool;
 };
+
+//Implementation
+#include "LinkedList.cpp"
 
 #endif // LinkedList_h__

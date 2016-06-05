@@ -1,32 +1,27 @@
+#ifndef LinkedList_cpp__
+#define LinkedList_cpp__
+
 #include "LinkedList.h"
 #include <assert.h>
 
 template <typename T>
-struct ListNode
+LinkedList<T>::LinkedList(int MaxItemCount)
 {
-  T value;
-  int32_t fwrdPtr;
-  int32_t backPtr;
-};
-
-template <typename T>
-LinkedList::LinkedList(int MaxItemCount)
-{
-  Initialie(MaxItemCount);
+  Initialize(MaxItemCount);
 }
 
 template <typename T>
-void LinkedList::Initialie(int MaxItemCount)
+void LinkedList<T>::Initialize(int MaxItemCount)
 {
   ItemPool.Initialize(MaxItemCount);
   ItemList = new ListNode[MaxItemCount];
-  ListStart = -1;
-  ListEnd = -1;
+  ListStart = 0;
+  ListEnd = 0;
   ItemCount = 0;
 }
 
 template <typename T>
-int32_t LinkedList::Insert(T item, int32_t itemPtr)
+int32_t LinkedList<T>::Insert(T item, int32_t itemPtr)
 {
   if ((itemPtr > ItemCount) | (itemPtr < 0)) assert(false); // attempt to insert outside of list bounds
 
@@ -57,29 +52,31 @@ int32_t LinkedList::Insert(T item, int32_t itemPtr)
     //How will we do that?
   }
 
+  ItemCount++;
+
   return newNodePtr;
 
 }
 
 template <typename T>
-T LinkedList::Obtain(int32_t itemPtr)
+T LinkedList<T>::Obtain(int32_t itemPtr)
 {
   return ItemList[itemPtr].value;
 }
 
 template <typename T>
-void LinkedList::Move(int32_t sourceItemPtr, int32_t destinationItemPtr)
+void LinkedList<T>::MoveToStart(int32_t itemPtr)
 {
-  if (sourceItemPtr != destinationItemPtr)
+  if (itemPtr != ListStart)
   {
-    T sourceData = Obtain(sourceItemPtr);
-    Delete(sourceItemPtr);
-    Insert(sourceData, destinationItemPtr);
+    ListNode& first = ItemList[itemPtr];
+    first.fwrdPtr = ListStart;
+    ListStart = itemPtr;
   }
 }
 
 template <typename T>
-void LinkedList::Delete(int32_t itemPtr)
+void LinkedList<T>::Delete(int32_t itemPtr)
 {
   if ((itemPtr > ItemCount) | (itemPtr < 0)) assert(false); // attempt to delete outside of list bounds
 
@@ -99,25 +96,27 @@ void LinkedList::Delete(int32_t itemPtr)
 }
 
 template <typename T>
-int32_t LinkedList::FirstItem()
+int32_t LinkedList<T>::FirstItem()
 {
   return ListStart;
 }
 
 template <typename T>
-int32_t LinkedList::FinalItem()
+int32_t LinkedList<T>::FinalItem()
 {
   return ListEnd;
 }
 
 template <typename T>
-int32_t LinkedList::NextItem(int32_t itemPtr)
+int32_t LinkedList<T>::NextItem(int32_t itemPtr)
 {
   return ItemList[itemPtr].fwrdPtr;
 }
 
 template <typename T>
-int32_t LinkedList::PrevItem(int32_t itemPtr)
+int32_t LinkedList<T>::PrevItem(int32_t itemPtr)
 {
   return ItemList[itemPtr].backPtr;
 }
+
+#endif // LinkedList_cpp__

@@ -13,9 +13,7 @@ void Pool::Initialize(uint32_t MaxItemCount)
   maxItemCount = MaxItemCount;
   freeList = new uint32_t[MaxItemCount];
   for (uint32_t i = 0; i < MaxItemCount; i++)
-  {
     freeList[i] = i;
-  }
 }
 
 uint32_t Pool::New()
@@ -26,7 +24,7 @@ uint32_t Pool::New()
 
 void Pool::Old(uint32_t val)
 {
-  if (currentItem <= 0) assert(false); // Pool is over-filling!
+  if (currentItem <= 0) assert(false); // Pool is over-filled!
   freeList[--currentItem] = val;
 }
 

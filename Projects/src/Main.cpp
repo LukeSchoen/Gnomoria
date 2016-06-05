@@ -3,29 +3,27 @@
 #include "World.h"
 #include "WorldAccess.h"
 #include "WorldDraw.h"
+#include "WorldGenerator.h"
 #include "Camera.h"
 #include "Text.h"
 #include "SDL.h"
-#include <glm.hpp>
 #include <stdio.h>
 #include "InputHandler.h"
 #include "Cursor.h"
 #include "FrameRate.h"
 #include "Debug.h"
 #include "perlinNoise.h"
+#include "Image.h"
 
 
 //Main Loop
 int wmain(int argc, char *argv[])
 {
+  testworldgen();
+
   if (!Renderer_Initialise()) {printf("Failed to initialize!\n"); getchar(); return 1;}
 
-  Audio_PlayMP3("Assets\\music\\DaysWork.mp3");
-
-  PerlinNoiseGenerator worldNoiseGenerator;
-  uint8_t * worldNoise = worldNoiseGenerator.GeneratePerlinNoise(256, 256, 10);
-
-
+  //Audio_PlayMP3("Assets\\music\\DaysWork.mp3");
 
   World_LoadWorld();
   Text_Initialize();
@@ -35,12 +33,21 @@ int wmain(int argc, char *argv[])
 
   InputManager input;
 
+  //Create World
+  WorldGenerator &worldGen = *WorldGenerator::GetInstance();
+  //worldGen.Create("newTest", Vec3i(1024, 256, 1024));
 
-  WorldAccess& gameWorld = *WorldAccess::GetInstance();
-  gameWorld.Load("Assets\\Worlds\\test");
-  WorldDraw worldDrawer = *WorldDraw::GetInstance();
+  //Open World
+  WorldAccess &gameWorld = *WorldAccess::GetInstance();
+  gameWorld.Load("newTest");
 
-  RenderObject chunk = worldDrawer.BuildRegionMesh(Vec2i(-256, -256), Vec2i(128, 128), 128);
+  //Generate World Data
+  //worldGen.GenerateWorld();
+
+
+  //Draw World
+  WorldDraw &worldDrawer = *WorldDraw::GetInstance();
+  RenderObject chunk = worldDrawer.BuildRegionMesh(Vec2i(0, 0), Vec2i(256, 256), 1);
   chunk.UploadToGPU();
 
   printf("%d\n", gameWorld.GetBlock( Vec3i(0,55,0) ).floorType);

@@ -12,8 +12,6 @@ struct WorldDraw
 
   RenderObject BuildRegionMesh(Vec2i pos, Vec2i size, int layer);
 
-
-
 };
 
 

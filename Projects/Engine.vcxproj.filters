@@ -79,9 +79,6 @@
     <Filter Include="Source\Engine\DenseHashMap">
       <UniqueIdentifier>{86b10283-a499-42d3-8705-82ac58322110}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Game\Noise\InputHandler">
-      <UniqueIdentifier>{4086db20-3ba2-448e-acb1-b758e4ad1e34}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source\Engine\ChronoCache">
       <UniqueIdentifier>{f36493ec-e35e-49a5-9ef4-8156c2356d39}</UniqueIdentifier>
     </Filter>
@@ -90,6 +87,24 @@
     </Filter>
     <Filter Include="Source\Engine\Pool">
       <UniqueIdentifier>{b95dea33-279f-4a40-a32a-01867afa5374}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Game\World\Generator">
+      <UniqueIdentifier>{2e688bfa-8a36-45bd-aebe-ce8d8777074a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Engine\File">
+      <UniqueIdentifier>{ad2f7a9a-3ec5-43ea-ac1b-f7719d9fa078}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Game\World\Paths">
+      <UniqueIdentifier>{e726d1c8-4394-4ecd-99d4-158229b47c65}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Engine\String">
+      <UniqueIdentifier>{6a368ca8-faca-41a3-b577-a542e93ee962}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Engine\Image">
+      <UniqueIdentifier>{0cf03ada-b42e-4fbe-a873-57fd7ff9188a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Game\InputHandler">
+      <UniqueIdentifier>{4086db20-3ba2-448e-acb1-b758e4ad1e34}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -127,7 +142,7 @@
       <Filter>Source\Math</Filter>
     </ClInclude>
     <ClInclude Include="src\InputHandler.h">
-      <Filter>Source\Game\Noise\InputHandler</Filter>
+      <Filter>Source\Game\InputHandler</Filter>
     </ClInclude>
     <ClInclude Include="src\FrameRate.h">
       <Filter>Source\Engine\Performance</Filter>
@@ -195,6 +210,24 @@
     <ClInclude Include="src\Pool.h">
       <Filter>Source\Engine\Pool</Filter>
     </ClInclude>
+    <ClInclude Include="src\WorldGenerator.h">
+      <Filter>Source\Game\World\Generator</Filter>
+    </ClInclude>
+    <ClInclude Include="src\File.h">
+      <Filter>Source\Engine\File</Filter>
+    </ClInclude>
+    <ClInclude Include="src\WorldPaths.h">
+      <Filter>Source\Game\World\Paths</Filter>
+    </ClInclude>
+    <ClInclude Include="src\GString.h">
+      <Filter>Source\Engine\String</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Image.h">
+      <Filter>Source\Engine\Image</Filter>
+    </ClInclude>
+    <ClInclude Include="src\AdvNoise.h">
+      <Filter>Source\Game\Noise</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Renderer.cpp">
@@ -219,7 +252,7 @@
       <Filter>Source\Math</Filter>
     </ClCompile>
     <ClCompile Include="src\InputHandler.cpp">
-      <Filter>Source\Game\Noise\InputHandler</Filter>
+      <Filter>Source\Game\InputHandler</Filter>
     </ClCompile>
     <ClCompile Include="src\Debug.cpp">
       <Filter>Source\Game\Debugger</Filter>
@@ -260,9 +293,26 @@
     <ClCompile Include="src\ChronoCache.cpp">
       <Filter>Source\Engine\ChronoCache</Filter>
     </ClCompile>
-    <ClCompile Include="src\LinkedList.cpp" />
     <ClCompile Include="src\Pool.cpp">
       <Filter>Source\Engine\Pool</Filter>
+    </ClCompile>
+    <ClCompile Include="src\WorldPaths.cpp">
+      <Filter>Source\Game\World\Paths</Filter>
+    </ClCompile>
+    <ClCompile Include="src\WorldGenerator.cpp">
+      <Filter>Source\Game\World\Generator</Filter>
+    </ClCompile>
+    <ClCompile Include="src\File.cpp">
+      <Filter>Source\Engine\File</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GString.cpp">
+      <Filter>Source\Engine\String</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Image.cpp">
+      <Filter>Source\Engine\Image</Filter>
+    </ClCompile>
+    <ClCompile Include="src\AdvNoise.cpp">
+      <Filter>Source\Game\Noise</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -26,24 +26,29 @@ RenderObject WorldDraw::BuildRegionMesh(Vec2i pos, Vec2i size, int layer)
     {
       Vec3i blockPos = WorldOcclusion_Solve(Vec2i(x, y) + pos, layer);
 
-      uint8_t blockID = world.GetBlock(blockPos).floorType;
-
-      switch (blockID)
+      if (blockPos != Vec3i(-1, -1, -1))
       {
-      case 1: blockID = 1; break;
-      case 2: blockID = 4; break;
-      case 3: blockID = 2; break;
-      case 4: blockID = 0; break;
-      case 8: blockID = 6; break;
-      case 9: blockID = 6; break;
-      case 12: blockID = 5; break;
-      default: blockID = 7; break;
-      }
+        uint8_t blockID = world.GetBlock(blockPos).floorType;
 
-      //Floor
-      if (blockID > 0)
-      {
-        Tile_AddTile(region, blockPos, Vec3(1.0, 1.0, 1.0), 16 + blockID, Vec2i(0, 0));
+        switch (blockID)
+        {
+        case 0: blockID = 0; break;
+        case 1: blockID = 1; break;
+        case 2: blockID = 4; break;
+        case 3: blockID = 2; break;
+        case 4: blockID = 0; break;
+        case 8: blockID = 6; break;
+        case 9: blockID = 6; break;
+        case 12: blockID = 5; break;
+        default: blockID = 7; break;
+        }
+
+        //Floor
+        if (blockID > 0)
+        {
+          Tile_AddTile(region, blockPos, Vec3(1.0, 1.0, 1.0), 16 + blockID, Vec2i(0, 0));
+        }
+
       }
 
     }
